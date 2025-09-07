@@ -1566,6 +1566,7 @@ More readable output, *with grouping* (like Ripgrep, ~rg~, or ~ack~):
 
 #+begin_src conf
     # Usage: git grep-all SEARCH_TERM
+    #
     # Search for a string in all Git-tracked files.
     grep-all = "!f() { \
         git rev-list --all \
@@ -1575,6 +1576,19 @@ More readable output, *with grouping* (like Ripgrep, ~rg~, or ~ack~):
     # MANY DUPLICATES.
     # Suggestion: Add a warning in the docstring, or use a different approach if
     # you want to search all files in ALL BRANCHES.
+
+    # Usage: git grep-all2 SEARCH_TERM
+    #
+    # Search for a specific string in all Git-tracked files within the
+    # repository. This alias is useful for quickly finding occurrences of
+    # a particular term across the entire codebase.
+    grep-all2 = "!f() { \
+        if [ $# -ne 1 ]; then \
+            printf >&2 'Usage: git grep-all SEARCH_TERM\n'; \
+            return 2; \
+        fi; \
+        git grep -n -- \"$1\"; \
+    }; f"
 #+end_src
 
 Print the name of each *file with matches*:

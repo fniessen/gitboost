@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20250809.1530>
+# .gitconfig_gitboost, Time-stamp: <20250907.1834>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -451,6 +451,7 @@
     }; f"
 
     # Usage: git grep-all SEARCH_TERM
+    #
     # Search for a string in all Git-tracked files.
     grep-all = "!f() { \
         git rev-list --all \
@@ -460,6 +461,19 @@
     # MANY DUPLICATES.
     # Suggestion: Add a warning in the docstring, or use a different approach if
     # you want to search all files in ALL BRANCHES.
+
+    # Usage: git grep-all2 SEARCH_TERM
+    #
+    # Search for a specific string in all Git-tracked files within the
+    # repository. This alias is useful for quickly finding occurrences of
+    # a particular term across the entire codebase.
+    grep-all2 = "!f() { \
+        if [ $# -ne 1 ]; then \
+            printf >&2 'Usage: git grep-all SEARCH_TERM\n'; \
+            return 2; \
+        fi; \
+        git grep -n -- \"$1\"; \
+    }; f"
 
     # Usage: git gno PATTERN [TREE]
     # Search for a pattern in all tracked filenames, ignoring case and binary
