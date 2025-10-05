@@ -29,6 +29,16 @@ shortcuts and customization options to *boost your productivity*.  Browse the
 contents, try them out, and feel free to contribute your own enhancements.
 Let's make Git even better together!
 
+#+begin_quote
+[!TIP]
+
+*** Level up your Git skills in Paris on 26 November 2025!
+Gain full control of your workflow with the exclusive "GitBoost" course.
+
+Visit https://gitboost.fr/ for details and registration,
+and to /secure your place today/.
+#+end_quote
+
 * Shell settings
 
 #+begin_src shell :tangle bin/rc-common-settings-gitboost
@@ -1127,7 +1137,7 @@ Then, in the working copy:
             printf >&2 'ERROR: git init failed. Aborting.\n'; \
             return 2; \
         }; \
-        if [ -z \"$(ls -A)\" ]; then \
+        if [ -z \"$(ls -A . | grep -v '^\\.git$')\" ]; then \
             touch .gitignore; \
         fi; \
         git add . || { \

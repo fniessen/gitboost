@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20250907.1834>
+# .gitconfig_gitboost, Time-stamp: <20250911.2142>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -274,7 +274,7 @@
             printf >&2 'ERROR: git init failed. Aborting.\n'; \
             return 2; \
         }; \
-        if [ -z \"$(ls -A)\" ]; then \
+        if [ -z \"$(ls -A . | grep -v '^\\.git$')\" ]; then \
             touch .gitignore; \
         fi; \
         git add . || { \
