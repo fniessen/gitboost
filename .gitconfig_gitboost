@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20251024.1119>
+# .gitconfig_gitboost, Time-stamp: <20251024.1134>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -454,6 +454,10 @@
     ##?
     ##? Search PATTERN in all files of the current branch (working tree).
     ##? Equivalent to a repo-wide grep on the checked-out code.
+    ##?
+    ##? Example:
+    ##?   git grep-all-tracked-files SELECT -- '*.sql'
+    ##?                                 Search for "SELECT" only in .sql files.
     grep-all-tracked-files = "!f() { \
       test $# -ge 1 || { printf 'Usage: git grep-all-tracked-files PATTERN [-- PATHSPEC]\\n' >&2; exit 2; }; \
       PATTERN=\"$1\"; shift; \

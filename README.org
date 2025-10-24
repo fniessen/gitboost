@@ -1579,12 +1579,18 @@ More readable output, *with grouping* (like Ripgrep, ~rg~, or ~ack~):
     ##?
     ##? Search PATTERN in all files of the current branch (working tree).
     ##? Equivalent to a repo-wide grep on the checked-out code.
+    ##?
+    ##? Example:
+    ##?   git grep-all-tracked-files SELECT -- '*.sql'
+    ##?                                 Search for "SELECT" only in .sql files.
     grep-all-tracked-files = "!f() { \
       test $# -ge 1 || { printf 'Usage: git grep-all-tracked-files PATTERN [-- PATHSPEC]\\n' >&2; exit 2; }; \
       PATTERN=\"$1\"; shift; \
       git --no-pager grep -n --break --heading -I -e \"$PATTERN\" \"$@\"; \
     }; f"
+#+end_src
 
+#+begin_src conf
     ##? Usage: git grep-all-branches PATTERN [-- PATHSPEC]
     ##?
     ##? Search PATTERN across all local branch tips (no full history).
