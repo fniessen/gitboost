@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20251024.1134>
+# .gitconfig_gitboost, Time-stamp: <20251024.1428>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -42,11 +42,10 @@
     prompt = false
 
 [diff]
-    tool = meld
+    tool = emacs
 
-[difftool "meld"]
-    # Set the command to launch "meld" with the two input files as arguments.
-    cmd = meld "$LOCAL" "$REMOTE"
+[difftool "emacs"]
+    cmd = git-ediff "$LOCAL" "$REMOTE"
 
 [core]
     # editor = notepad++.exe -multiInst -notabbar -nosession -noPlugin

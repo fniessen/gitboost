@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+
+emacsclient --eval "(ediff-files (format \"%s\" \"$1\") (format \"%s\" \"$2\"))"

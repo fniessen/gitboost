@@ -338,9 +338,9 @@ Select a diff tool to visualize the differences.
 Commonly used tools include ~vimdiff~, ~meld~, ~kdiff3~, ~tkdiff~, etc. Choose one
 according to your preference and availability.
 
-*** Use [[https://meldmerge.org/][Meld]] as Git ~difftool:~
+*** Use [[https://meldmerge.org/][Meld]] as Git ~difftool~
 
-#+begin_src conf
+#+begin_src conf :tangle no
 [diff]
     tool = meld
 
@@ -349,15 +349,14 @@ according to your preference and availability.
     cmd = meld "$LOCAL" "$REMOTE"
 #+end_src
 
-*** Use Emacs as Git ~difftool:~
+*** Use Emacs as Git ~difftool~
 
-#+begin_src conf :tangle no
+#+begin_src conf
 [diff]
     tool = emacs
 
 [difftool "emacs"]
-    # path = $(which emacs)
-    path = /snap/bin/emacs
+    cmd = git-ediff "$LOCAL" "$REMOTE"
 #+end_src
 
 ** External editor
