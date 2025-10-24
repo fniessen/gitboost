@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20251024.1100>
+# .gitconfig_gitboost, Time-stamp: <20251024.1119>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -448,31 +448,6 @@
             printf \"\n$(tput bold)$(tput setaf 2)Branch: $branch_name$(tput sgr0)\n\"; \
             git grep -n -- \"$PATTERN\" \"$branch_name\" -- \":*.$EXTENSION\"; \
         done; \
-    }; f"
-
-    # Usage: git grep-all SEARCH_TERM
-    #
-    # Search for a string in all Git-tracked files.
-    grep-all = "!f() { \
-        git rev-list --all \
-          | xargs git grep \"$1\"; \
-    }; f"
-    # Issue: This will search ALL COMMITS, not just all files, and will generate
-    # MANY DUPLICATES.
-    # Suggestion: Add a warning in the docstring, or use a different approach if
-    # you want to search all files in ALL BRANCHES.
-
-    # Usage: git grep-all2 SEARCH_TERM
-    #
-    # Search for a specific string in all Git-tracked files within the
-    # repository. This alias is useful for quickly finding occurrences of
-    # a particular term across the entire codebase.
-    grep-all2 = "!f() { \
-        if [ $# -ne 1 ]; then \
-            printf >&2 'Usage: git grep-all SEARCH_TERM\n'; \
-            return 2; \
-        fi; \
-        git grep -n -- \"$1\"; \
     }; f"
 
     ##? Usage: git grep-all-tracked-files PATTERN [-- PATHSPEC]
