@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20251024.1518>
+# .gitconfig_gitboost, Time-stamp: <20251024.1550>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -1113,7 +1113,8 @@
 
     ##? Usage: git difftool-parent [COMMIT]
     ##?
-    ##? Compare a commit with its immediate parent using the configured difftool.
+    ##? Compare a commit (default HEAD) with its immediate parent using the
+    ##? configured difftool.
     ##?
     ##? Examples:
     ##?   git difftool-parent            # Compare HEAD^..HEAD
@@ -1127,27 +1128,37 @@
         git difftool $COMMIT^..$COMMIT; \
     }; f"
 
-    ##? Usage: git ediff-commit COMMIT FILE_PATH
+    ##? Usage: git difftool-file-parent COMMIT FILE_PATH
     ##?
-    ##? Compare FILE_PATH between the current version and COMMIT using
-    ##? Emacs' ediff.
-    ediff-commit = "!f() { \
+    ##? Compare a specific file between a given commit and its immediate parent,
+    ##? using the configured difftool.
+    ##?
+    ##? This shows how FILE_PATH changed in COMMIT.
+    difftool-file-parent = "!f() { \
+        [ $# -eq 2 ] || { printf >&2 'Usage: git difftool-file-parent COMMIT FILE_PATH\\n'; exit 64; }; \
         COMMIT=\"$1\"; \
         FILE_PATH=\"$2\"; \
-        current_file=\"$FILE_PATH\"; \
-        git show ${COMMIT}:\"$FILE_PATH\" > /tmp/ediff-temp-${COMMIT}; \
-        emacs --eval \"(ediff-files \\\"$current_file\\\" \\\"/tmp/ediff-temp-${COMMIT}\\\")\"; \
-        rm /tmp/ediff-temp-${COMMIT}; \
+        git difftool \"COMMIT^..COMMIT\" -- \"FILE_PATH\"; \
     }; f"
 
-    ##? Usage: git difftool-last-modified FILE_PATH
+    ##? Usage: git difftool-last FILE_PATH
     ##?
-    ##? Compare the current version of FILE_PATH with its state in the last
-    ##? commit that modified it, using difftool.
-    difftool-last-modified = "!f() { \
-        FILE_PATH=\"$1\"; \
-        last_modified_commit_hash=$(git rev-list -1 HEAD -- \"$FILE_PATH\"); \
-        git difftool \"$last_modified_commit_hash\"^ -- \"$FILE_PATH\"; \
+    ##? Open the difftool for the most recent change of FILE.
+    ##?
+    ##? Notes:
+    ##? - Finds the last commit that modified FILE_PATH using 'git log -1'.
+    ##? - Then runs 'git difftool COMMIT^..COMMIT -- FILE_PATH' to show the change.
+    difftool-last = "!f() { \
+        [ $# -ge 1 ] || { printf >&2 'Usage: git difftool-last FILE_PATH [-- <options>]\\n'; exit 64; }; \
+        FILE_PATH=$1; \
+        LAST_COMMIT=$(git log -1 --format=%H -- \"$FILE_PATH\") || exit 1; \
+        if [ -z \"$LAST_COMMIT\" ]; then \
+            printf >&2 'Error: No commits found for %s\\n' \"$FILE_PATH\"; \
+            exit 1; \
+        fi; \
+        printf 'Last commit modifying %s:\\n' \"$FILE_PATH\"; \
+        git log -1 --format='  %C(yellow)%h%Creset %Cgreen%an%Creset %Cblue%ar%Creset %s' -- \"$FILE_PATH\"; \
+        git difftool \"$LAST_COMMIT^..$LAST_COMMIT\" -- \"$FILE_PATH\"; \
     }; f"
 
     ##? Usage: git diff-stat [FILE]
