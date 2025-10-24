@@ -1,39 +1,84 @@
 #!/usr/bin/env sh
 
-# Safe and robust Git difftool for Emacs + Ediff
+# Safe and robust Git difftool for Emacs + Ediff.
+
+# Strict mode.
+set -eu
+
+# BSD-style exit codes.
+EX_USAGE=64       # Command line usage error
+EX_NOINPUT=66     # Cannot open input
+EX_UNAVAILABLE=69 # Service unavailable (dependency missing)
+EX_SOFTWARE=70    # Internal software error
+EX_OSERR=71       # System error (cannot fork, pipe, etc.)
+EX_TEMPFAIL=75    # Temporary failure
 
 # Check emacsclient.
 if ! command -v emacsclient > /dev/null 2>&1; then
-    printf "Error: emacsclient not found in PATH\n" >&2
-    printf "       Make sure Emacs is installed and 'emacsclient' is available.\n" >&2
-    exit 2
+    printf >&2 "Error: emacsclient not found in PATH\n"
+    printf >&2 "       Make sure Emacs is installed and 'emacsclient' is available.\n"
+    exit $EX_UNAVAILABLE
 fi
 
-# Check if Emacs server is running.
-# (emacsclient will start it if --alternate-editor is set, but let's be helpful)
-if ! emacsclient --eval "t" > /dev/null 2>&1; then
-    printf "Warning: Emacs server not running. Starting one...\n" >&2
-    # Start server in background (non-blocking)
-    emacs --daemon 2> /dev/null || {
-        printf "Error: Failed to start Emacs daemon\n" >&2
-        exit 2
-    }
-    # Wait a moment for server to start
-    sleep 0.5
+# Check emacs if daemon start might be needed.
+if ! command -v emacs > /dev/null 2>&1; then
+    printf >&2 "Error: 'emacs' executable not found in PATH\n"
+    printf >&2 "       Needed to start the Emacs daemon if it is not running.\n"
+    exit $EX_UNAVAILABLE
 fi
 
 # Validate arguments.
-if [ -z "$1" ] || [ -z "$2" ]; then
-    printf "Usage: git-ediff <local> <remote>\n" >&2
-    exit 2
+if [ "$#" -lt 2 ]; then
+    printf >&2 "Usage: git-ediff LOCAL REMOTE\n"
+    exit $EX_USAGE
 fi
 
 LOCAL="$1"
 REMOTE="$2"
 
-# Safety: Ensure files exist (optional but helpful).
-[ -f "$LOCAL" ] || { printf "Error: LOCAL file missing: %s\n" "$LOCAL" >&2; exit 2; }
-[ -f "$REMOTE" ] || { printf "Error: REMOTE file missing: %s\n" "$REMOTE" >&2; exit 2; }
+# Check that both files exist.
+[ -f "$LOCAL" ]  || { printf >&2 "Error: LOCAL file missing: %s\n" "$LOCAL";  exit $EX_NOINPUT;}
+[ -f "$REMOTE" ] || { printf >&2 "Error: REMOTE file missing: %s\n" "$REMOTE"; exit $EX_NOINPUT;}
 
-# Run Ediff.
-exec emacsclient --eval "(ediff-files \"$LOCAL\" \"$REMOTE\")"
+# Ensure Emacs server is running.
+if ! emacsclient --eval "t" > /dev/null 2>&1; then
+    printf >&2 "Info: Emacs server not running. Attempting to start one...\n"
+    if ! emacs --daemon > /dev/null 2>&1; then
+        printf >&2 "Error: Failed to start Emacs daemon\n"
+        exit $EX_OSERR
+    fi
+
+    # Poll for readiness (up to 15s).
+    READY=0
+    TIMEOUT=15
+    i=0
+    while [ "$i" -lt "$TIMEOUT" ]; do
+        if emacsclient --eval "t" > /dev/null 2>&1; then
+            READY=1
+            break
+        fi
+        sleep 1
+        i=$((i + 1))
+    done
+
+    if [ "$READY" -ne 1 ]; then
+        printf >&2 "Error: Emacs server did not become ready within ${TIMEOUT}s\n"
+        exit $EX_TEMPFAIL
+    fi
+fi
+
+# Escape filenames for safe embedding in Elisp strings.
+esc() {
+    printf '%s' "$1" | LC_ALL=C sed -e 's/\\/\\\\/g' -e 's/"/\\"/g'
+}
+L=$(esc "$LOCAL")
+R=$(esc "$REMOTE")
+
+# Run Ediff (no exec → capture exit code).
+if ! emacsclient --eval "(ediff-files \"$L\" \"$R\")"; then
+    printf >&2 "Error: emacsclient failed to launch ediff\n"
+    printf >&2 "Hint: verify the Emacs server is responsive and filenames are accessible\n"
+    exit $EX_SOFTWARE
+fi
+
+exit 0
