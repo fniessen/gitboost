@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20251024.1044>
+# .gitconfig_gitboost, Time-stamp: <20251024.1049>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -664,8 +664,8 @@
       printf 'WARNING: This will permanently delete all untracked files and directories.\\n'; \
       printf 'Tracked files and ignored files will remain untouched.\\n'; \
       printf 'Are you sure? [y/N] '; \
-      read ans; \
-      if [ \"$ans\" = y ] || [ \"$ans\" = Y ]; then \
+      read -r confirm; \
+      if [ \"$confirm\" = y ] || [ \"$confirm\" = Y ]; then \
         git clean -f -d; \
       else \
         printf 'Aborted.\\n'; \
@@ -684,8 +684,8 @@
     clean-only-ignored = "!f() { \
       printf 'WARNING: This will permanently delete ignored files and directories.\\n'; \
       printf 'Are you sure? [y/N] '; \
-      read ans; \
-      if [ \"$ans\" = y ] || [ \"$ans\" = Y ]; then \
+      read -r confirm; \
+      if [ \"$confirm\" = y ] || [ \"$confirm\" = Y ]; then \
         git clean -f -d -X; \
       else \
         printf 'Aborted.\\n'; \
@@ -705,8 +705,8 @@
     clean-all = "!f() { \
       printf 'WARNING: This will permanently delete *all* ignored and untracked files and directories!\\n'; \
       printf 'Are you absolutely sure? [y/N] '; \
-      read ans; \
-      if [ \"$ans\" = y ] || [ \"$ans\" = Y ]; then \
+      read -r confirm; \
+      if [ \"$confirm\" = y ] || [ \"$confirm\" = Y ]; then \
         git clean -f -d -x; \
       else \
         printf 'Aborted.\\n'; \

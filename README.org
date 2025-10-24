@@ -1945,8 +1945,8 @@ Delete all untracked files, like ~hg purge --unknown~.
       printf 'WARNING: This will permanently delete all untracked files and directories.\\n'; \
       printf 'Tracked files and ignored files will remain untouched.\\n'; \
       printf 'Are you sure? [y/N] '; \
-      read ans; \
-      if [ \"$ans\" = y ] || [ \"$ans\" = Y ]; then \
+      read -r confirm; \
+      if [ \"$confirm\" = y ] || [ \"$confirm\" = Y ]; then \
         git clean -f -d; \
       else \
         printf 'Aborted.\\n'; \
@@ -1988,8 +1988,8 @@ It is commonly used to clean up ignored build artifacts or temporary files.
     clean-only-ignored = "!f() { \
       printf 'WARNING: This will permanently delete ignored files and directories.\\n'; \
       printf 'Are you sure? [y/N] '; \
-      read ans; \
-      if [ \"$ans\" = y ] || [ \"$ans\" = Y ]; then \
+      read -r confirm; \
+      if [ \"$confirm\" = y ] || [ \"$confirm\" = Y ]; then \
         git clean -f -d -X; \
       else \
         printf 'Aborted.\\n'; \
@@ -2037,8 +2037,8 @@ files cannot be recovered* unless you have a backup.
     clean-all = "!f() { \
       printf 'WARNING: This will permanently delete *all* ignored and untracked files and directories!\\n'; \
       printf 'Are you absolutely sure? [y/N] '; \
-      read ans; \
-      if [ \"$ans\" = y ] || [ \"$ans\" = Y ]; then \
+      read -r confirm; \
+      if [ \"$confirm\" = y ] || [ \"$confirm\" = Y ]; then \
         git clean -f -d -x; \
       else \
         printf 'Aborted.\\n'; \
