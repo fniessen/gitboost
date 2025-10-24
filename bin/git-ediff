@@ -1,3 +1,39 @@
 #!/usr/bin/env sh
 
-emacsclient --eval "(ediff-files (format \"%s\" \"$1\") (format \"%s\" \"$2\"))"
+# Safe and robust Git difftool for Emacs + Ediff
+
+# Check emacsclient.
+if ! command -v emacsclient > /dev/null 2>&1; then
+    printf "Error: emacsclient not found in PATH\n" >&2
+    printf "       Make sure Emacs is installed and 'emacsclient' is available.\n" >&2
+    exit 2
+fi
+
+# Check if Emacs server is running.
+# (emacsclient will start it if --alternate-editor is set, but let's be helpful)
+if ! emacsclient --eval "t" > /dev/null 2>&1; then
+    printf "Warning: Emacs server not running. Starting one...\n" >&2
+    # Start server in background (non-blocking)
+    emacs --daemon 2> /dev/null || {
+        printf "Error: Failed to start Emacs daemon\n" >&2
+        exit 2
+    }
+    # Wait a moment for server to start
+    sleep 0.5
+fi
+
+# Validate arguments.
+if [ -z "$1" ] || [ -z "$2" ]; then
+    printf "Usage: git-ediff <local> <remote>\n" >&2
+    exit 2
+fi
+
+LOCAL="$1"
+REMOTE="$2"
+
+# Safety: Ensure files exist (optional but helpful).
+[ -f "$LOCAL" ] || { printf "Error: LOCAL file missing: %s\n" "$LOCAL" >&2; exit 2; }
+[ -f "$REMOTE" ] || { printf "Error: REMOTE file missing: %s\n" "$REMOTE" >&2; exit 2; }
+
+# Run Ediff.
+exec emacsclient --eval "(ediff-files \"$LOCAL\" \"$REMOTE\")"
