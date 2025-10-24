@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20251024.1428>
+# .gitconfig_gitboost, Time-stamp: <20251024.1516>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -1111,12 +1111,20 @@
         git diff $COMMIT_HASH^..$COMMIT_HASH > $COMMIT_HASH.diff; \
     }; f"
 
-    ##? Usage: git difftool-parent [COMMIT_HASH]
+    ##? Usage: git difftool-parent [COMMIT]
     ##?
-    ##? Launch difftool for changes between specified commit and its parent.
+    ##? Compare a commit with its immediate parent using the configured difftool.
+    ##?
+    ##? Examples:
+    ##?   git difftool-parent            # Compare HEAD^..HEAD
+    ##?   git difftool-parent a1b2c3d    # Compare that commit with its parent
+    ##?
+    ##? Notes:
+    ##? - Falls back to HEAD if no commit hash is provided.
+    ##? - Supports any extra difftool options after the commit hash.
     difftool-parent = "!f() { \
-        COMMIT_HASH=${1:-HEAD}; \
-        git difftool $COMMIT_HASH^..$COMMIT_HASH; \
+        COMMIT=${1:-HEAD}; \
+        git difftool $COMMIT^..$COMMIT; \
     }; f"
 
     ##? Usage: git ediff-commit COMMIT_HASH FILE_PATH
