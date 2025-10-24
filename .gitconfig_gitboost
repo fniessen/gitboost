@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20250911.2142>
+# .gitconfig_gitboost, Time-stamp: <20251024.1004>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -1978,10 +1978,10 @@
     }; f"
     # 'git remote prune' does not understand '--all'.
 
-    ##? Usage: git delete-gone-branches
+    ##? Usage: git delete-gone-local-branches
     ##?
     ##? Delete local branches that are tracking remote branches that are gone.
-    delete-gone-branches = "!f() { \
+    delete-gone-local-branches = "!f() { \
         gone_branches=$(git branch -vv | awk '/: gone]/{print $1}'); \
         if [ -n \"$gone_branches\" ]; then \
             printf \"Deleting gone branches:\n\"; \

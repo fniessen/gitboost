@@ -5113,10 +5113,10 @@ checked out or that you've created locally.
 (by deleting any local branches that are marked as "gone"):
 
 #+begin_src conf
-    ##? Usage: git delete-gone-branches
+    ##? Usage: git delete-gone-local-branches
     ##?
     ##? Delete local branches that are tracking remote branches that are gone.
-    delete-gone-branches = "!f() { \
+    delete-gone-local-branches = "!f() { \
         gone_branches=$(git branch -vv | awk '/: gone]/{print $1}'); \
         if [ -n \"$gone_branches\" ]; then \
             printf \"Deleting gone branches:\n\"; \
