@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20251024.1516>
+# .gitconfig_gitboost, Time-stamp: <20251024.1518>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -1081,14 +1081,14 @@
         done | sort -k1,1r; \
     }; f"
 
-    # Usage: git changed-files [COMMIT_HASH]
+    # Usage: git changed-files [COMMIT]
     # Show all files modified in each commit, including merge commits.
     # Examples:
     #   git changed-files             List files modified in last commit
     #   git changed-files bada55      List files modified in the commit with hash 'bada55'
     changed-files = "!f() { \
-        COMMIT_HASH=${1:-HEAD}; \
-        git diff --name-only $COMMIT_HASH^..$COMMIT_HASH; \
+        COMMIT=${1:-HEAD}; \
+        git diff --name-only $COMMIT^..$COMMIT; \
     }; f"
 
     # Show commit with word-wise diff.
@@ -1104,11 +1104,11 @@
         git format-patch $current_branch.patch; \
     }; f"
 
-    # Usage: git download-commit-plain-diff [COMMIT_HASH]
+    # Usage: git download-commit-plain-diff [COMMIT]
     # Create a diff file for the changes in a commit or range of commits.
     download-commit-plain-diff = "!f() { \
-        COMMIT_HASH=${1:-HEAD}; \
-        git diff $COMMIT_HASH^..$COMMIT_HASH > $COMMIT_HASH.diff; \
+        COMMIT=${1:-HEAD}; \
+        git diff $COMMIT^..$COMMIT > $COMMIT.diff; \
     }; f"
 
     ##? Usage: git difftool-parent [COMMIT]
@@ -1127,17 +1127,17 @@
         git difftool $COMMIT^..$COMMIT; \
     }; f"
 
-    ##? Usage: git ediff-commit COMMIT_HASH FILE_PATH
+    ##? Usage: git ediff-commit COMMIT FILE_PATH
     ##?
-    ##? Compare FILE_PATH between the current version and COMMIT_HASH using
+    ##? Compare FILE_PATH between the current version and COMMIT using
     ##? Emacs' ediff.
     ediff-commit = "!f() { \
-        COMMIT_HASH=\"$1\"; \
+        COMMIT=\"$1\"; \
         FILE_PATH=\"$2\"; \
         current_file=\"$FILE_PATH\"; \
-        git show ${COMMIT_HASH}:\"$FILE_PATH\" > /tmp/ediff-temp-${COMMIT_HASH}; \
-        emacs --eval \"(ediff-files \\\"$current_file\\\" \\\"/tmp/ediff-temp-${COMMIT_HASH}\\\")\"; \
-        rm /tmp/ediff-temp-${COMMIT_HASH}; \
+        git show ${COMMIT}:\"$FILE_PATH\" > /tmp/ediff-temp-${COMMIT}; \
+        emacs --eval \"(ediff-files \\\"$current_file\\\" \\\"/tmp/ediff-temp-${COMMIT}\\\")\"; \
+        rm /tmp/ediff-temp-${COMMIT}; \
     }; f"
 
     ##? Usage: git difftool-last-modified FILE_PATH
@@ -1213,30 +1213,30 @@
     # Open Meld with directory comparison for all modified files.
     dir-diff = difftool -t meld --dir-diff
 
-    ##? Usage: git branches-containing COMMIT_HASH
+    ##? Usage: git branches-containing COMMIT
     ##?
     ##? List all branches (including remote branches) that contain the specified
     ##? commit, sorted by the latest commit date.
     branches-containing = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git branches-containing COMMIT_HASH\n'; \
+            printf >&2 'Usage: git branches-containing COMMIT\n'; \
             return 64; \
         fi; \
-        COMMIT_HASH=\"$1\"; \
-        git branch --all --sort=-committerdate --contains \"$COMMIT_HASH\"; \
+        COMMIT=\"$1\"; \
+        git branch --all --sort=-committerdate --contains \"$COMMIT\"; \
     }; f"
 
-    ##? Usage: git tags-containing COMMIT_HASH
+    ##? Usage: git tags-containing COMMIT
     ##?
     ##? List tags containing a specific commit, sorted by the most recent commit
     ##? date.
     tags-containing = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git tags-containing COMMIT_HASH\n'; \
+            printf >&2 'Usage: git tags-containing COMMIT\n'; \
             return 64; \
         fi; \
-        COMMIT_HASH=\"$1\"; \
-        git tag --contains \"$COMMIT_HASH\" \
+        COMMIT=\"$1\"; \
+        git tag --contains \"$COMMIT\" \
             | while read tag; do \
                 commit_hash=$(git rev-list -n 1 \"$tag\"); \
                 commit_date=$(git log -1 --format='%ct' \"$commit_hash\"); \
@@ -2478,14 +2478,14 @@
     # Archive the current state to a compressed tar.gz file named latest.tar.gz with maximum compression.
     archive-targz = archive --output=latest.tar.gz -9
 
-    ##? Usage: git export-commit-files [COMMIT_HASH]
+    ##? Usage: git export-commit-files [COMMIT]
     ##?
     ##? Export changed files from a commit or HEAD and create a zip archive.
     export-commit-files = "!f() { \
-        COMMIT_HASH=$(git rev-parse --short ${1:-HEAD}); \
+        COMMIT=$(git rev-parse --short ${1:-HEAD}); \
         current_branch=$(git convert-current-branch-name); \
-        zip_file_name=$(git repo-slug-remote)-commit-${current_branch}-${COMMIT_HASH}.zip; \
-        git changed-files \"$COMMIT_HASH\" | tr '\n' '\\0' | xargs -0 zip -9 \"$zip_file_name\"; \
+        zip_file_name=$(git repo-slug-remote)-commit-${current_branch}-${COMMIT}.zip; \
+        git changed-files \"$COMMIT\" | tr '\n' '\\0' | xargs -0 zip -9 \"$zip_file_name\"; \
     }; f"
 
     # Since oldest ancestor...
@@ -2559,7 +2559,7 @@
         xdg-open ${url/.git}/wiki; \
     }; f"
 
-    ##? Usage: git download-repository [COMMIT_HASH]
+    ##? Usage: git download-repository [COMMIT]
     ##?
     ##? Download the contents of the repository at a specific commit (default
     ##? is HEAD) and save it as a zip file named
@@ -2577,8 +2577,8 @@
     ##?                                 Download the repository at the v1.0.0
     ##?                                 tag.
     download-repository = "!f() { \
-        COMMIT_HASH=${1:-HEAD}; \
-        git archive $COMMIT_HASH --format=zip --output=$(basename $(git root))-commit-$(git rev-parse $COMMIT_HASH).zip; \
+        COMMIT=${1:-HEAD}; \
+        git archive $COMMIT --format=zip --output=$(basename $(git root))-commit-$(git rev-parse $COMMIT).zip; \
     }; f"
 
     ##? Usage: git x COMMAND
