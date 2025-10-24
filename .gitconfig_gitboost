@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20251024.1018>
+# .gitconfig_gitboost, Time-stamp: <20251024.1040>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -2078,15 +2078,15 @@
 
     last-tag-all = !git describe --tags $(git rev-list --tags --max-count=1)
 
-    # Usage: git rename-tag OLD_TAG NEW_TAG
+    # Usage: git rename-tag OLD_TAG_NAME NEW_TAG_NAME
     # Rename a tag (locally and remotely).
     rename-tag = "!f() { \
         if [ $# -ne 2 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
             printf >&2 'Usage: git rename-tag OLD_TAG NEW_TAG\n'; \
             return 64; \
         fi; \
-        OLD_TAG=\"$1\"; \
-        NEW_TAG=\"$2\"; \
+        OLD_TAG_NAME=\"$1\"; \
+        NEW_TAG_NAME=\"$2\"; \
         origin=$(git origin); \
         git tag \"$NEW_TAG\" \"$OLD_TAG\"; \
         git tag -d \"$OLD_TAG\"; \
@@ -2094,7 +2094,7 @@
         git push \"$origin\" :refs/tags/\"$OLD_TAG\"; \
     }; f"
 
-    ##? Usage: git delete-tag TAG
+    ##? Usage: git delete-tag TAG_NAME
     ##?
     ##? Delete a local and remote tag.
     delete-tag = "!f() { \
@@ -2102,7 +2102,7 @@
             printf >&2 'Usage: git delete-tag TAG\\n'; \
             return 64; \
         fi; \
-        TAG=\"$1\"; \
+        TAG_NAME=\"$1\"; \
         git tag -d \"$TAG\" && \
         git push \"$(git origin)\" --delete \"$TAG\"; \
     }; f"

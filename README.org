@@ -5339,15 +5339,15 @@ Show the latest tag /in all branches/:
 Change the tag name but keep it on the same commit.
 
 #+begin_src conf
-    # Usage: git rename-tag OLD_TAG NEW_TAG
+    # Usage: git rename-tag OLD_TAG_NAME NEW_TAG_NAME
     # Rename a tag (locally and remotely).
     rename-tag = "!f() { \
         if [ $# -ne 2 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
             printf >&2 'Usage: git rename-tag OLD_TAG NEW_TAG\n'; \
             return 64; \
         fi; \
-        OLD_TAG=\"$1\"; \
-        NEW_TAG=\"$2\"; \
+        OLD_TAG_NAME=\"$1\"; \
+        NEW_TAG_NAME=\"$2\"; \
         origin=$(git origin); \
         git tag \"$NEW_TAG\" \"$OLD_TAG\"; \
         git tag -d \"$OLD_TAG\"; \
@@ -5362,7 +5362,7 @@ If you have defined a tag and no longer want it defined, use the ~delete-tag~
 alias to remove it.
 
 #+begin_src conf
-    ##? Usage: git delete-tag TAG
+    ##? Usage: git delete-tag TAG_NAME
     ##?
     ##? Delete a local and remote tag.
     delete-tag = "!f() { \
@@ -5370,7 +5370,7 @@ alias to remove it.
             printf >&2 'Usage: git delete-tag TAG\\n'; \
             return 64; \
         fi; \
-        TAG=\"$1\"; \
+        TAG_NAME=\"$1\"; \
         git tag -d \"$TAG\" && \
         git push \"$(git origin)\" --delete \"$TAG\"; \
     }; f"
