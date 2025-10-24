@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20251024.1556>
+# .gitconfig_gitboost, Time-stamp: <20251024.1656>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -1128,6 +1128,9 @@
         git difftool $COMMIT^..$COMMIT; \
     }; f"
 
+    # Alias for 'difftool-parent'.
+    dftp = difftool-parent
+
     ##? Usage: git difftool-file-parent COMMIT FILE_PATH
     ##?
     ##? Compare a specific file between a given commit and its immediate parent,
@@ -1140,6 +1143,9 @@
         FILE_PATH=\"$2\"; \
         git difftool \"COMMIT^..COMMIT\" -- \"FILE_PATH\"; \
     }; f"
+
+    # Alias for 'difftool-file-parent'.
+    dftfp = difftool-file-parent
 
     ##? Usage: git difftool-file-last FILE_PATH
     ##?
@@ -1160,6 +1166,9 @@
         git log -1 --format='  %C(yellow)%h%Creset %Cgreen%an%Creset %Cblue%ar%Creset %s' -- \"$FILE_PATH\"; \
         git difftool \"$LAST_COMMIT^..$LAST_COMMIT\" -- \"$FILE_PATH\"; \
     }; f"
+
+    # Alias for 'difftool-file-last'.
+    dftfl = difftool-file-last
 
     ##? Usage: git diff-stat [FILE]
     ##?

@@ -3109,6 +3109,9 @@ expressions.
         COMMIT=${1:-HEAD}; \
         git difftool $COMMIT^..$COMMIT; \
     }; f"
+
+    # Alias for 'difftool-parent'.
+    dftp = difftool-parent
 #+end_src
 
 This allows doing nice things like:
@@ -3130,6 +3133,9 @@ This allows doing nice things like:
         FILE_PATH=\"$2\"; \
         git difftool \"COMMIT^..COMMIT\" -- \"FILE_PATH\"; \
     }; f"
+
+    # Alias for 'difftool-file-parent'.
+    dftfp = difftool-file-parent
 #+end_src
 
 Diff the last commit for a given file:
@@ -3154,6 +3160,9 @@ Diff the last commit for a given file:
         git log -1 --format='  %C(yellow)%h%Creset %Cgreen%an%Creset %Cblue%ar%Creset %s' -- \"$FILE_PATH\"; \
         git difftool \"$LAST_COMMIT^..$LAST_COMMIT\" -- \"$FILE_PATH\"; \
     }; f"
+
+    # Alias for 'difftool-file-last'.
+    dftfl = difftool-file-last
 #+end_src
 
 Usage:
