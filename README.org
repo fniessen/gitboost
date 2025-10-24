@@ -3070,7 +3070,8 @@ Show changes with word-level granularity and color highlighting.
 #+end_src
 
 : git show 23231bf66
-: = git difftool 23231bf66^..23231bf66
+=
+: git difftool 23231bf66^..23231bf66
 
 #+begin_src conf
     # Usage: git download-email-patch
@@ -3134,15 +3135,15 @@ This allows doing nice things like:
 Diff the last commit for a given file:
 
 #+begin_src conf
-    ##? Usage: git difftool-last FILE_PATH
+    ##? Usage: git difftool-file-last FILE_PATH
     ##?
     ##? Open the difftool for the most recent change of FILE.
     ##?
     ##? Notes:
     ##? - Finds the last commit that modified FILE_PATH using 'git log -1'.
     ##? - Then runs 'git difftool COMMIT^..COMMIT -- FILE_PATH' to show the change.
-    difftool-last = "!f() { \
-        [ $# -ge 1 ] || { printf >&2 'Usage: git difftool-last FILE_PATH [-- <options>]\\n'; exit 64; }; \
+    difftool-file-last = "!f() { \
+        [ $# -ge 1 ] || { printf >&2 'Usage: git difftool-file-last FILE_PATH [-- <options>]\\n'; exit 64; }; \
         FILE_PATH=$1; \
         LAST_COMMIT=$(git log -1 --format=%H -- \"$FILE_PATH\") || exit 1; \
         if [ -z \"$LAST_COMMIT\" ]; then \
@@ -3157,7 +3158,7 @@ Diff the last commit for a given file:
 
 Usage:
 
-: git difftool-last path/to/File.cpp
+: git difftool-file-last path/to/File.cpp
 
 This opens your configured ~difftool~ with the changes to =path/to/File.cpp= in the
 last commit it was touched.
