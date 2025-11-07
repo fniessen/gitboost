@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20251024.1656>
+# .gitconfig_gitboost, Time-stamp: <20251107.1505>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -1422,7 +1422,7 @@
 
     ##? Usage: git amend-message NEW_COMMIT_MESSAGE
     ##?
-    ##? Safely amend the last commit message, only if it hasn’t been pushed.
+    ##? Safely amend the last commit message, only if it hasn't been pushed.
     ##?
     ##? Example:
     ##?   git amend-message "Fix typo in README"

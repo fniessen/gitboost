@@ -75,7 +75,7 @@ install it.
 #+begin_src shell :tangle bin/rc-common-settings-gitboost
 # Check if 'zip' command is available.
 if ! command -v zip > /dev/null 2>&1; then
-    printf >&2 "ERROR: 'zip' is not installed. Please install it.\n"
+    printf >&2 "WARNING: 'zip' is not installed. Please install it.\n"
 fi
 #+end_src
 
@@ -3749,7 +3749,7 @@ Oh, you made a typo!
 #+begin_src conf
     ##? Usage: git amend-message NEW_COMMIT_MESSAGE
     ##?
-    ##? Safely amend the last commit message, only if it hasn’t been pushed.
+    ##? Safely amend the last commit message, only if it hasn't been pushed.
     ##?
     ##? Example:
     ##?   git amend-message "Fix typo in README"

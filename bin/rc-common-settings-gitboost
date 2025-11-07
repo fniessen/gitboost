@@ -16,7 +16,7 @@ alias g=git
 
 # Check if 'zip' command is available.
 if ! command -v zip > /dev/null 2>&1; then
-    printf >&2 "ERROR: 'zip' is not installed. Please install it.\n"
+    printf >&2 "WARNING: 'zip' is not installed. Please install it.\n"
 fi
 
 # Go to the root of your Git repository.
