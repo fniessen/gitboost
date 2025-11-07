@@ -543,6 +543,15 @@ character in Git-handled repositories.
   those three and Git does not care. This can make diffs harder to read and
   merges more difficult.
 
+*Useful alias:*
+
+List all files whose end-of-line differs between index and working tree:
+
+#+begin_src conf
+[alias]
+    eol-diff = "!git ls-files --eol | awk -F'[ /]+' '$2 != $4 {print $NF}'"
+#+end_src
+
 ** Proxy configuration
 
 #+begin_src conf :tangle no
