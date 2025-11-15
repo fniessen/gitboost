@@ -3437,7 +3437,8 @@ log --grep~. Equivalent of calling ~git log --grep=A --grep=B --grep=C ...~:
 #+begin_src conf
     # Usage: git find-commit-messages-any PATTERN...
     #
-    # Search for commit messages that match any of the provided patterns (OR logic, like in BitBucket).
+    # Search for commit messages that match any of the provided patterns (OR
+    # logic, like in BitBucket).
     #
     # This will search commit messages for the provided patterns and list the
     # matching commits.
@@ -3471,7 +3472,8 @@ Show commits that match *all* of the following patterns
 #+begin_src conf
     # Usage: git find-commit-messages-all PATTERN...
     #
-    # Search for commits that match all provided patterns in commit messages (AND logic, like in Gitlab).
+    # Search for commit messages that match all provided patterns (AND logic,
+    # like in Gitlab).
     #
     # This will search commit messages for the provided patterns and list the
     # matching commits.

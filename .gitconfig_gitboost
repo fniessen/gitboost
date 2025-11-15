@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20251115.2153>
+# .gitconfig_gitboost, Time-stamp: <20251115.2158>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -1318,7 +1318,8 @@
 
     # Usage: git find-commit-messages-any PATTERN...
     #
-    # Search for commit messages that match any of the provided patterns (OR logic, like in BitBucket).
+    # Search for commit messages that match any of the provided patterns (OR
+    # logic, like in BitBucket).
     #
     # This will search commit messages for the provided patterns and list the
     # matching commits.
@@ -1337,7 +1338,8 @@
 
     # Usage: git find-commit-messages-all PATTERN...
     #
-    # Search for commits that match all provided patterns in commit messages (AND logic, like in Gitlab).
+    # Search for commit messages that match all provided patterns (AND logic,
+    # like in Gitlab).
     #
     # This will search commit messages for the provided patterns and list the
     # matching commits.
