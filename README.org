@@ -3481,7 +3481,7 @@ Show commits that match *all* of the following patterns
             printf >&2 'Usage: git find-commit-messages-all PATTERN...\n'; \
             return 64; \
         fi; \
-        CMD=\"git log --all-match -i --format='%at:%C(green)%ad%C(reset) %C(yellow)%h%C(auto)%d%C(reset) %s %C(bold blue)<%an>%C(reset)' --color=always\"; \
+        CMD=\"git log --all-match -i --color=always\"; \
         for PATTERN in \"$@\"; do \
             CMD=\"$CMD --grep='$PATTERN'\"; \
         done; \
