@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20251115.1229>
+# .gitconfig_gitboost, Time-stamp: <20251115.1556>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -417,29 +417,45 @@
         done; \
     }; f"
 
-    # Usage: git search-for-code PATTERN [TREE]
-    #
-    ##? Perform a case-insensitive search for "pattern" in all tracked files,
-    ##? displaying line numbers, context around matches, and file headers.
+    ##? Usage: git grep-current-branch PATTERN [-- PATHSPEC]
     ##?
-    ##? Example:
-    ##?   git search-for-code "pattern"
-    search-for-code = "!git --no-pager grep -i -I --line-number --break --heading -C 1"
+    ##? Perform a case-insensitive search for PATTERN in all tracked files of
+    ##? the currently checked-out branch. Shows line numbers, file headers, and
+    ##? one line of context around each match.
+    ##?
+    ##? Examples:
+    ##?   git grep-current-branch SELECT
+    ##?   git grep-current-branch SELECT -- '*.sql'
+    ##?                                 Search for "SELECT" only in .sql files.
+    ##?   git grep-current-branch error -- src/
+    grep-current-branch = "!f() { \
+        test $# -ge 1 || { printf 'Usage: git grep-current-branch PATTERN [-- PATHSPEC]\\n' >&2; exit 2; }; \
+        PATTERN=\"$1\"; shift; \
+        git --no-pager grep -i -I -n --break --heading -C 1 -e \"$PATTERN\" \"$@\"; \
+      }; f"
 
-    # Alias for 'search-for-code'.
-    ack = search-for-code
+    # Aliases for 'grep-current-branch'.
+    grep-all-tracked-files = grep-current-branch
+    search-for-code = grep-current-branch
+    ack = grep-current-branch
 
-    # Usage: git search-for-code-in-extension EXTENSION PATTERN
+    grep-current-branch-case = "!f() { \
+        test $# -ge 1 || { printf 'Usage: git grep-current-branch-case PATTERN [-- PATHSPEC]\\n' >&2; exit 2; }; \
+        PATTERN=\"$1\"; shift; \
+        git --no-pager grep -I -n --break --heading -C 1 -e \"$PATTERN\" \"$@\"; \
+    }; f"
+
+    # Usage: git grep-local-branches-in-extension EXTENSION PATTERN
     #
-    # Search for a specific code pattern in files with a given extension across
-    # all local branches.
+    # Search for PATTERN in files with the given extension across all local
+    # branches.
     #
     # Arguments:
-    #   EXTENSION                      The file extension to search within.
+    #   EXTENSION                      The file extension to search within (without dot).
     #   PATTERN                        The code pattern to search for.
-    search-for-code-in-extension = "!f() { \
+    grep-local-branches-in-extension = "!f() { \
         if [ $# -ne 2 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git search-for-code-in-extension EXTENSION PATTERN\n'; \
+            printf >&2 'Usage: git grep-local-branches-in-extension EXTENSION PATTERN\n'; \
             return 64; \
         fi; \
         EXTENSION=\"$1\"; \
@@ -447,30 +463,16 @@
         git local-branches | \
         while read -r branch_name; do \
             printf \"\n$(tput bold)$(tput setaf 2)Branch: $branch_name$(tput sgr0)\n\"; \
-            git grep -n -- \"$PATTERN\" \"$branch_name\" -- \":*.$EXTENSION\"; \
+            git grep -n -- \"$PATTERN\" \"$branch_name\" -- \"*.$EXTENSION\"; \
         done; \
     }; f"
 
-    ##? Usage: git grep-all-tracked-files PATTERN [-- PATHSPEC]
-    ##?
-    ##? Search PATTERN in all files of the current branch (working tree).
-    ##? Equivalent to a repo-wide grep on the checked-out code.
-    ##?
-    ##? Example:
-    ##?   git grep-all-tracked-files SELECT -- '*.sql'
-    ##?                                 Search for "SELECT" only in .sql files.
-    grep-all-tracked-files = "!f() { \
-      test $# -ge 1 || { printf 'Usage: git grep-all-tracked-files PATTERN [-- PATHSPEC]\\n' >&2; exit 2; }; \
-      PATTERN=\"$1\"; shift; \
-      git --no-pager grep -n --break --heading -I -e \"$PATTERN\" \"$@\"; \
-    }; f"
-
-    ##? Usage: git grep-all-branches PATTERN [-- PATHSPEC]
+    ##? Usage: git grep-all-local-branches PATTERN [-- PATHSPEC]
     ##?
     ##? Search PATTERN across all local branch tips (no full history).
     ##? Faster, with far fewer duplicates than grep-all-commits.
-    grep-all-branches = "!f() { \
-      test $# -ge 1 || { printf 'Usage: git grep-all-branches PATTERN [-- PATHSPEC]\\n' >&2; exit 2; }; \
+    grep-all-local-branches = "!f() { \
+      test $# -ge 1 || { printf 'Usage: git grep-all-local-branches PATTERN [-- PATHSPEC]\\n' >&2; exit 2; }; \
       PATTERN=\"$1\"; shift; \
       git for-each-ref --format='%(refname:short)' refs/heads \
         | xargs -r -n 64 sh -c 'git --no-pager grep -n --break --heading -I -e \"$0\" \"$@\"' \"$PATTERN\" \"$@\"; \
