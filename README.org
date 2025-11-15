@@ -2839,7 +2839,7 @@ branch:
 #+begin_src conf
     ##? Usage: git file-history-all-branches FILE_PATH
     ##?
-    ##? Show the commit history of a specific file or directory across all branches.
+    ##? Show the complete history of this file (or directory) across the whole repo.
     file-history-all-branches = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
             printf >&2 'Usage: git file-history-all-branches FILE_PATH\n'; \
@@ -2974,33 +2974,33 @@ Use the following alias to show the *most recent commits* for a specific file or
 directory across all local branches:
 
 #+begin_src conf
-    ##? Usage: git file-last-commits FILE_PATH
+    ##? Usage: git file-last-commit-all-local-branches FILE_PATH
     ##?
-    ##? Show the most recent commits for a specific file or directory across all local branches.
-    file-last-commits = "!f() { \
+    ##? For each local branch, show only the most recent commit that touched
+    ##? this file, sorted by date.
+    file-last-commit-all-local-branches = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git file-last-commits FILE_PATH\n'; \
+            printf >&2 'Usage: git file-last-commit-all-local-branches FILE_PATH\n'; \
             return 64; \
         fi; \
         FILE_PATH=\"$1\"; \
         local_branches=$(git local-branches); \
         for branch in $local_branches; do \
-            printf \"$(git log --decorate=no -1 \
-                               --format=\"%at:%C(green)%ad%C(reset) %C(yellow)%h%C(auto)%d%C(reset) %s %C(blue)<%an>%C(reset)\" \
-                               --color=always $branch -- \"$FILE_PATH\") $(tput bold)$branch$(tput sgr0)\n\"; \
+            printf \"$(git log --follow --decorate=no -1 \
+                               --color=always $branch -- \"$FILE_PATH\") $(tput bold)$(tput setaf 2)$branch$(tput sgr0)\n\"; \
         done | sort -r | sed 's#^[0-9]*:##g'; \
     }; f"
 
-    ##? Alias for 'file-last-commits'.
-    wwflu = file-last-commits
+    ##? Alias for 'file-last-commit-all-local-branches'.
+    wwflu = file-last-commit-all-local-branches
 #+end_src
 
-: git file-last-commits schema/ab-products/bldgops/common/console/ab-bldgops-console-wr-ds.axvw
+: git file-last-commit-all-local-branches schema/ab-products/bldgops/common/console/ab-bldgops-console-wr-ds.axvw
 
 #+begin_src conf
-    file-last-commits2 = "!f() { \
+    file-last-commit-all-local-branches2 = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git file-last-commits2 FILE_PATH\n'; \
+            printf >&2 'Usage: git file-last-commit-all-local-branches2 FILE_PATH\n'; \
             return 64; \
         fi; \
         FILE_PATH=\"$1\"; \
