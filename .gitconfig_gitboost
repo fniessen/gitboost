@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20251115.2158>
+# .gitconfig_gitboost, Time-stamp: <20260105.1452>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -675,7 +675,7 @@
     ##? Remove only untracked files and directories (confirmation required).
     ##? THIS COMMAND MAY DELETE FILES THAT CANNOT BE RECOVERED.
     clean-only-untracked = "!f() { \
-      printf 'WARNING: This will permanently delete all untracked files and directories.\\n'; \
+      printf '\\033[1;33mWARNING: This will permanently delete all untracked files and directories.\\033[0m\\n'; \
       printf 'Tracked files and ignored files will remain untouched.\\n'; \
       printf 'Are you sure? [y/N] '; \
       read -r confirm; \
@@ -696,7 +696,7 @@
     ##? Remove only ignored files and directories (confirmation required).
     ##? THIS COMMAND MAY DELETE FILES THAT CANNOT BE RECOVERED.
     clean-only-ignored = "!f() { \
-      printf 'WARNING: This will permanently delete ignored files and directories.\\n'; \
+      printf '\\033[1;33mWARNING: This will permanently delete all ignored files and directories.\\033[0m\\n'; \
       printf 'Are you sure? [y/N] '; \
       read -r confirm; \
       if [ \"$confirm\" = y ] || [ \"$confirm\" = Y ]; then \
@@ -717,7 +717,7 @@
     ##? required).
     ##? THIS COMMAND MAY DELETE FILES THAT CANNOT BE RECOVERED.
     clean-all = "!f() { \
-      printf 'WARNING: This will permanently delete *all* ignored and untracked files and directories!\\n'; \
+      printf '\\033[1;33mWARNING: This will permanently delete *all* ignored and untracked files and directories!\\033[0m\\n'; \
       printf 'Are you absolutely sure? [y/N] '; \
       read -r confirm; \
       if [ \"$confirm\" = y ] || [ \"$confirm\" = Y ]; then \
@@ -956,7 +956,7 @@
         fi; \
         FILE_PATH=\"$1\"; \
         if ! git ls-tree -r HEAD --name-only 2> /dev/null | grep -q \"^$FILE_PATH$\"; then \
-            printf >&2 \"\\e[1;33mWarning: File '%s' not found in the current branch of the repository.\\e[0m\n\" \"$FILE_PATH\"; \
+            printf \"\\e[1;33mWarning: File '%s' not found in the current branch of the repository.\\e[0m\n\" \"$FILE_PATH\"; \
         fi; \
         git log --follow -- \"$FILE_PATH\" 2> /dev/null; \
     }; f"
@@ -980,7 +980,7 @@
         fi; \
         FILE_PATH=\"$1\"; \
         if ! git ls-tree -r HEAD --name-only 2> /dev/null | grep -q \"^$FILE_PATH$\"; then \
-            printf >&2 \"\\e[1;33mWarning: File '%s' not found in the current branch of the repository.\\e[0m\n\" \"$FILE_PATH\"; \
+            printf \"\\e[1;33mWarning: File '%s' not found in the current branch of the repository.\\e[0m\n\" \"$FILE_PATH\"; \
         fi; \
         git log --follow --all -- \"$FILE_PATH\" 2> /dev/null; \
     }; f"
