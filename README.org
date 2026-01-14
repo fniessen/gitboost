@@ -5,11 +5,11 @@
 #+KEYWORDS:  git, aliases, productivity, workflow, tutorial, configuration, automation, devops
 
 #+LANGUAGE:  en
-#+OPTIONS:   H:4 num:nil toc:nil
+#+OPTIONS:   H:4 num:nil toc:t
 
 #+SETUPFILE: ~/org/html-theme-readtheorg.setup
 
-#+EXPORT_EXCLUDE_TAGS: noexport
+#+EXCLUDE_TAGS: noexport
 #+PROPERTY:  header-args :tangle .gitconfig_gitboost :eval no
 
 #+name: current-time
@@ -95,42 +95,6 @@ alias cdroot='git rev-parse && cd "$(git rev-parse --show-toplevel)"'
 # Exclude .git directories/files from grep results.
 alias ng="grep -v '\.git/'"             # "No Git".
 #+end_src
-
-* Table of Contents                                                   :TOC_1_gh:
-- [[#foreword][Foreword]]
-- [[#overview][Overview]]
-- [[#global-options][Global options]]
-- [[#------------------------------------------------------------------------------][------------------------------------------------------------------------------]]
-- [[#aliases][Aliases]]
-- [[#repository][Repository]]
-- [[#instructions][Instructions]]
-- [[#source-files][Source Files]]
-- [[#commits][Commits]]
-- [[#branches][Branches]]
-- [[#tags][Tags]]
-- [[#compare-revisions-commits-branches-or-tags][Compare Revisions (commits, branches or tags)]]
-- [[#releases][?Releases]]
-- [[#graph][?Graph]]
-- [[#contributors][?Contributors]]
-- [[#pull-requests][Pull requests]]
-- [[#pipelines][Pipelines]]
-- [[#deployments-to-different-environments][Deployments (to different environments)]]
-- [[#issues][Issues]]
-- [[#wiki][Wiki]]
-- [[#downloads][Downloads]]
-- [[#settings][Settings]]
-- [[#-------------------------------------------------------------------------------1][------------------------------------------------------------------------------]]
-- [[#run-on-all-repositories][Run on All repositories]]
-- [[#sort-out][Sort out]]
-- [[#download-repository][Download repository]]
-- [[#what-if][What if]]
-- [[#if-you-made-a-mistake][If you made a mistake]]
-- [[#if-you-get-errors][If you get errors...]]
-- [[#github-tasks][GitHub tasks]]
-- [[#references][References]]
-- [[#git-clients][Git clients]]
-- [[#contributing][Contributing]]
-- [[#license][License]]
 
 * Foreword
 
@@ -957,7 +921,7 @@ If you forget your aliases and don't want to open =.gitconfig= just to check, ty
             | cut -c 7- \
             | sort \
             | sed 's_=_ = _' \
-            | sed 's/  */ /g' \
+            | sed 's_  *_ _g' \
             | awk -F ' = ' '{printf \"\\033[1m%s\\033[0m = %s\\n\", $1, $2}'; \
     }; f"
 #+end_src
@@ -3450,7 +3414,7 @@ log --grep~. Equivalent of calling ~git log --grep=A --grep=B --grep=C ...~:
         for PATTERN in \"$@\"; do \
             git log --grep=\"$PATTERN\" -i --format=\"%at:%C(green)%ad%C(reset) %C(yellow)%h%C(auto)%d%C(reset) %s %C(bold blue)<%an>%C(reset)\" --color=always; \
             printf \"\n\"; \
-        done | sort -r | sed 's/^[^:]*://'; \
+        done | sort -r | sed 's_^[^:]*:__'; \
     }; f"
     # XXX Add all, date short...
 #+end_src
@@ -3486,7 +3450,7 @@ Show commits that match *all* of the following patterns
         for PATTERN in \"$@\"; do \
             CMD=\"$CMD --grep='$PATTERN'\"; \
         done; \
-        eval $CMD | sort -r | sed 's/^[^:]*://'; \
+        eval $CMD | sort -r | sed 's_^[^:]*:__'; \
     }; f"
 #+end_src
 
@@ -5951,7 +5915,7 @@ will fetch the *pull request* #5 into a *local* ~pr/5~ *branch* and check it out
 
 : #!/usr/bin/env bash
 : TMP_FILE=$(mktemp)
-: REPO_SLUG_REMOTE=$(git remote -v | grep '^upstream' | head -n 1 | perl -lne 's/github.com:?\/?(.*)\/([^.]*)([.]git| )// or next; print $1,"/",$2')
+: REPO_SLUG_REMOTE=$(git remote -v | grep '^upstream' | head -n 1 | perl -lne 's_github.com:?\/?(.*)\/([^.]*)([.]git| )__ or next; print $1,"/",$2')
 : PR_NUMBER=$(git current-branch | cut -d/ -f 2)
 : curl -s https://api.github.com/repos/$REPO_SLUG_REMOTE/pulls/$PR_NUMBER > $TMP_FILE
 : trap "{ rm -f $TMP_FILE; }" EXIT
@@ -6008,7 +5972,7 @@ If everything is OK, you can merge the pull request.
             printf >&2 'Usage: git merge-pr REMOTE PR_NUMBER\\n'; \
             return 64; \
         fi; \
-        USER_AND_REPO=$(git remote show \"$1\" | grep 'Fetch URL:' | sed -E 's/.*github.com[:\\/]([a-zA-Z_-]+)\\/([a-zA-Z_-]+)\\.git$/\\1 \\2/'); \
+        USER_AND_REPO=$(git remote show \"$1\" | grep 'Fetch URL:' | sed -E 's_.*github.com[:\\/]([a-zA-Z_-]+)\\/([a-zA-Z_-]+)\\.git$_\\1 \\2_'); \
         if [ -z \"$USER_AND_REPO\" ]; then \
             printf >&2 'ERROR: Could not determine GitHub user/repo from remote\\n'; \
             return 2; \
@@ -6022,9 +5986,9 @@ If everything is OK, you can merge the pull request.
             rm -f \"$TMP_FILE\"; \
             return 2; \
         fi; \
-        PULL_AUTHOR=$(awk '/\"head\":/{flag=1} flag&&/\"login\": \"/{print \\$2; exit}' \"$TMP_FILE\" | sed -E 's/\"([^\"]+)\".*/\\1/'); \
-        PULL_REF=$(awk '/\"head\":/{flag=1} flag&&/\"ref\": \"/{print \\$2; exit}' \"$TMP_FILE\" | sed -E 's/\"([^\"]+)\".*/\\1/'); \
-        PULL_TITLE=$(grep '\"title\": ' \"$TMP_FILE\" | sed 's/^ *\"title\": \"//' | sed 's/\",$//'); \
+        PULL_AUTHOR=$(awk '/\"head\":/{flag=1} flag&&/\"login\": \"/{print \\$2; exit}' \"$TMP_FILE\" | sed -E 's_\"([^\"]+)\".*_\\1_'); \
+        PULL_REF=$(awk '/\"head\":/{flag=1} flag&&/\"ref\": \"/{print \\$2; exit}' \"$TMP_FILE\" | sed -E 's_\"([^\"]+)\".*_\\1_'); \
+        PULL_TITLE=$(grep '\"title\": ' \"$TMP_FILE\" | sed 's_^ *\"title\": \"__' | sed 's_\",$__'); \
         rm -f \"$TMP_FILE\"; \
         if [ -z \"$PULL_AUTHOR\" ] || [ -z \"$PULL_REF\" ] || [ -z \"$PULL_TITLE\" ]; then \
             printf >&2 'ERROR: Failed to parse PR details\\n'; \
@@ -6750,7 +6714,7 @@ Run ~git show~ command in a temporary ~HOME~ directory set to ~/dev/null~.
                 printf '\\033[1m%s:\\033[0m\\n' \"$repo_slug_local\"; \
                 output=$(git -C \"$repo_path\" -c color.status=always \"$@\" 2>&1); \
                 if [ -n \"$output\" ]; then \
-                    printf '%s\\n' \"$output\" | sed 's/^/      /'; \
+                    printf '%s\\n' \"$output\" | sed 's_^_      _'; \
                 fi; \
                 printf '\\n'; \
             done; \
@@ -6865,7 +6829,7 @@ Then, *commit* the changes.
         remote_name=$(git origin); \
         git remote get-url \"$remote_name\"; \
     }; f"
-    # git remote show -n origin | grep "Fetch URL" | cut -d: -f2- | sed 's/^ *//'
+    # git remote show -n origin | grep "Fetch URL" | cut -d: -f2- | sed 's_^ *__'
 #+end_src
 
 #+begin_note
@@ -7460,7 +7424,7 @@ cd "$(git root)"
       # Read each line of output.
       while IFS= read -r file_path; do
           # Remove leading spaces from file_path.
-          file_path=$(printf '%s\n' \"$line\" | sed 's/^[[:space:]]*//')
+          file_path=$(printf '%s\n' \"$line\" | sed 's_^[[:space:]]*__')
           # If a file path is found, discard changes for that file.
           if [ -n "$file_path" ]; then
               git checkout -- "$file_path"
