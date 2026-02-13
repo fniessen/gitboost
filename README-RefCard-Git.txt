@@ -5,7 +5,7 @@
 #+KEYWORDS:
 #+LANGUAGE:  en
 
-#+SETUPFILE: ~/org/theme-readtheorg.setup
+#+SETUPFILE: ~/org/html-theme-readtheorg.setup
 
 * About Git
 

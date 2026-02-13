@@ -1,7 +1,7 @@
 # Hey Emacs, this is a -*- org -*- file ...
 #+TITLE:     TODO
 
-#+SETUPFILE: ~/org/theme-bigblow.setup
+#+SETUPFILE: ~/org/html-theme-bigblow.setup
 
 * Tasks
 
