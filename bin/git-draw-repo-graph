@@ -109,7 +109,7 @@ EOF
 
 abbreviate_sha1() {
   # BUG: in a blob or commit-msg, would also replace what looks like a sha1
-  perl -pe 's/([0-9a-f]{40})/substr(`git rev-parse --short=4 $1`,0,-1)/eg'
+  perl -pe 's_([0-9a-f]{40})_substr(`git rev-parse --short=4 $1`,0,-1)_eg'
 }
 
 ls_all_objects() {
@@ -148,7 +148,7 @@ print_dot_objects() {
     dotid="_$id"
     object_type=$(git cat-file -t $id)
     objcontent=$(git cat-file -p $id | abbreviate_sha1 |
-      perl -pe 's/([^a-zA-Z0-9\n\r])/\\$1/g; s/(\r?\n)?$/\\l/;')
+      perl -pe 's_([^a-zA-Z0-9\n\r])_\\$1_g; s_(\r?\n)?$_\\l_;')
     case $object_type in
       commit) fillcolor=palegreen1;;
       tag)    fillcolor=lightyellow;;  

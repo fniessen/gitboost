@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-#? git-switch-ssh-to-https, Time-stamp: <2025-08-02 Sat 12:12>
-#? Copyright (C) 2022-2025 Fabrice Niessen. All rights reserved.
+#? git-switch-ssh-to-https, Time-stamp: <2026-01-11 Sun 12:27>
+#? Copyright (C) 2022-2026 Fabrice Niessen. All rights reserved.
 #?
 #? License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
 #? This is free software: you are free to change and redistribute it.
@@ -56,7 +56,7 @@ if [[ "$debug" == "true" ]]; then
 fi
 
 # Extract the actual site from the OLD_URL.
-SITE=$(echo "$OLD_URL" | sed -Ene "s#git@([^:]*):.*#\1#p")
+SITE=$(echo "$OLD_URL" | sed -Ene "s_git@([^:]*):.*_\1_p")
 
 # Print debug info if debug flag is true.
 if [[ "$debug" == "true" ]]; then
@@ -64,8 +64,8 @@ if [[ "$debug" == "true" ]]; then
 fi
 
 # Get the repository owner and name, with debug info.
-REPO_OWNER=$(echo "$OLD_URL" | sed -Ene "s#git@$SITE[^:]*:([^/]*)/(.*).git#\1#p")
-REPO_SLUG=$(echo "$OLD_URL" | sed -Ene "s#git@$SITE[^:]*:([^/]*)/(.*).git#\2#p")
+REPO_OWNER=$(echo "$OLD_URL" | sed -Ene "s_git@$SITE[^:]*:([^/]*)/(.*).git_\1_p")
+REPO_SLUG=$(echo "$OLD_URL" | sed -Ene "s_git@$SITE[^:]*:([^/]*)/(.*).git_\2_p")
 
 # Print debug info if debug flag is true.
 if [[ "$debug" == "true" ]]; then

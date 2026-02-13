@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-#? git-check-java-jar-changes, Time-stamp: <2025-08-02 Sat 12:12>
-#? Copyright (C) 2025 Fabrice Niessen. All rights reserved.
+#? git-check-java-jar-changes, Time-stamp: <2026-01-11 Sun 11:33>
+#? Copyright (C) 2025-2026 Fabrice Niessen. All rights reserved.
 #?
 #? License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
 #? This is free software: you are free to change and redistribute it.
@@ -59,12 +59,12 @@ check_jar_changes() {
 
     if [[ -n "$added_jars" ]]; then
         new_jar_found=true
-        printf "New JAR found in commit.\n" | sed 's/^/      /'
+        printf "New JAR found in commit.\n" | sed 's_^_      _'
     fi
 
     if [[ -n "$deleted_jars" ]]; then
         old_jar_deleted=true
-        printf "Old JAR deleted in commit.\n" | sed 's/^/      /'
+        printf "Old JAR deleted in commit.\n" | sed 's_^_      _'
     fi
 }
 
@@ -107,7 +107,7 @@ while read -r commit; do
     if [[ -n "$java_files_changed" ]]; then
         any_java_changes=true
         printf "Checking commit %s...\n" "$(git rev-parse --short "$commit")"
-        printf "Java files modified/added in commit.\n" | sed 's/^/      /'
+        printf "Java files modified/added in commit.\n" | sed 's_^_      _'
 
         check_jar_changes "$commit"
 
@@ -118,7 +118,7 @@ while read -r commit; do
             commit_info=$(git log -1 --date=format-local:'%Y-%m-%d %a %H:%M' --format="%cd - %s <%an>" "$commit")
 
             printf "\033[1;37;41mConditions not met for commit %s: Either a new JAR wasn't added or an old JAR wasn't deleted.\033[0m\n      \033[1;37;41m%s\033[0m\n" \
-                   "$(git rev-parse --short "$commit")" "$commit_info" | sed 's/^/      /'
+                   "$(git rev-parse --short "$commit")" "$commit_info" | sed 's_^_      _'
         fi
     fi
 done <<< "$commits"
