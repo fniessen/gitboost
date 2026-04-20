@@ -2745,6 +2745,28 @@ List commits *showing changed files* (prettier and more concise version of
 
 *************** TODO More information with lastn2 (for file renames), but missing newline after merge commits...
 
+#+begin_src conf :tangle no
+    lastn3 = "!f() {
+        git show -m --name-status --stat -M $  (git rev-list -  ${1:-1} HEAD); 
+    }; f"
+
+    # Montre les fichiers modifiés par le dernier commit (ou N derniers)
+    # Pour les merges → affiche uniquement ce qu'a apporté la branche mergée
+    lastn3 = "!f() { \
+        n=${1:-1}; \
+        for c in $(git rev-list -n $n HEAD); do \
+            if git rev-parse --verify \"$c^2\" >/dev/null 2>&1; then \
+                echo \"$(tput bold)$(tput setaf 3)Merge commit $c$(tput sgr0) -- changes from merged branch:\"; \
+                git show --name-status --stat -M \"$c^2\"..\"$c\"; \
+            else \
+                echo \"$(tput bold)Commit $c$(tput sgr0):\"; \
+                git show --name-status --stat -M \"$c\"; \
+            fi; \
+            echo; \
+        done; \
+    }; f"
+#+end_src
+
 *** Show the commit history of a file
 
 *List of commits* that modified the *specified file*:
@@ -3025,6 +3047,13 @@ List all the changed files *in a commit* (also in a /merge commit/):
     changed-files = "!f() { \
         COMMIT=${1:-HEAD}; \
         git diff --name-only $COMMIT^..$COMMIT; \
+    }; f"
+#+end_src
+
+#+begin_src conf :tangle no
+    changed-files-m = "!f() { \
+        COMMIT=${1:-HEAD}; \
+        git show -m --name-status --stat -M \"$COMMIT\"; \
     }; f"
 #+end_src
 
