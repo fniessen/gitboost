@@ -3565,9 +3565,9 @@ any *line* that was added, removed, or changed.
     ##?   git find-commit-diffs "bugfix"
     find-commit-diffs = "!f() { \
         if [ -n \"$2\" ]; then \
-            git log -p -G \"$1\" \"$2\"; \
+            git log -G \"$1\" \"$2\"; \
         else \
-            git log -p -G \"$1\"; \
+            git log -G \"$1\"; \
         fi \
     }; f"
 #+end_src
@@ -3591,17 +3591,27 @@ in the code changes (diff) across all branches.
 
 : git log --all -p -- '*.sql' | grep -E -C 2 'rule_type'
 
-** Search in files
+** Search in file snapshots
+
+Searches for a fixed string across the complete file tree of every commit in the
+repository history. For each commit, it scans the full snapshot of all tracked
+files as they existed at that point in time, not just the diffs.
+
+The output format is: ~<short-commit-hash>:<path>:<matching line>~
+
+It may return the same match multiple times if the file was unchanged across
+several commits. Deleted files are included if they existed in past commits.
 
 #+begin_src conf
-    # Usage: git search-all-commits SEARCH_TERM
-    search-all-commits = "!f() { \
+    # Usage: git grep-string-in-all-commit-snapshots SEARCH_TERM
+    grep-string-in-all-commit-snapshots = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git search-all-commits SEARCH_TERM\n'; \
+            printf >&2 'Usage: git grep-string-in-all-commit-snapshots SEARCH_TERM\n'; \
             return 64; \
         fi; \
         SEARCH_TERM=\"$1\"; \
-        git rev-list --all | xargs git grep -F \"$SEARCH_TERM\"; \
+        git rev-list --all | \
+        xargs -n1 sh -c 'git grep -F \"$0\" \"$1\" | sed \"s/^$1:/$(git rev-parse --short $1):/\"' \"$SEARCH_TERM\"; \
     }; f"
 #+end_src
 

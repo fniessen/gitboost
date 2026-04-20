@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20260111.1141>
+# .gitconfig_gitboost, Time-stamp: <20260226.1534>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -1369,9 +1369,9 @@
     ##?   git find-commit-diffs "bugfix"
     find-commit-diffs = "!f() { \
         if [ -n \"$2\" ]; then \
-            git log -p -G \"$1\" \"$2\"; \
+            git log -G \"$1\" \"$2\"; \
         else \
-            git log -p -G \"$1\"; \
+            git log -G \"$1\"; \
         fi \
     }; f"
 
@@ -1385,14 +1385,15 @@
         git log --all -G \"$1\"; \
     }; f"
 
-    # Usage: git search-all-commits SEARCH_TERM
-    search-all-commits = "!f() { \
+    # Usage: git grep-string-in-all-commit-snapshots SEARCH_TERM
+    grep-string-in-all-commit-snapshots = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git search-all-commits SEARCH_TERM\n'; \
+            printf >&2 'Usage: git grep-string-in-all-commit-snapshots SEARCH_TERM\n'; \
             return 64; \
         fi; \
         SEARCH_TERM=\"$1\"; \
-        git rev-list --all | xargs git grep -F \"$SEARCH_TERM\"; \
+        git rev-list --all | \
+        xargs -n1 sh -c 'git grep -F \"$0\" \"$1\" | sed \"s/^$1:/$(git rev-parse --short $1):/\"' \"$SEARCH_TERM\"; \
     }; f"
 
     ##? Open the commits page of the origin remote repository in the default web
