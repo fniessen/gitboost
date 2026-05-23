@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20260523.1653>
+# .gitconfig_gitboost, Time-stamp: <20260523.1719>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -1229,7 +1229,7 @@
     # Word-wise diff of staged changes (index vs HEAD).
     wdfc = diff --color-words --cached
 
-    # Minimal (char-level), whitespace-insensitive diff of stage changes (index vs HEAD).
+    # Minimal (char-level), whitespace-insensitive diff of staged changes (index vs HEAD).
     mindfc = diff -w --word-diff-regex=. --color-words -U0 --cached
 
     # Usage: git dir-diff

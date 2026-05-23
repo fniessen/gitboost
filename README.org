@@ -3245,7 +3245,7 @@ your commit changes (to make sure you don't need to use the undo commands):
     # Word-wise diff of staged changes (index vs HEAD).
     wdfc = diff --color-words --cached
 
-    # Minimal (char-level), whitespace-insensitive diff of stage changes (index vs HEAD).
+    # Minimal (char-level), whitespace-insensitive diff of staged changes (index vs HEAD).
     mindfc = diff -w --word-diff-regex=. --color-words -U0 --cached
 #+end_src
 
