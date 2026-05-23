@@ -1588,8 +1588,7 @@ Print the name of each *file with matches*:
 
 #+begin_src conf
     # Usage: git gno PATTERN [TREE]
-    # Search for a pattern in all tracked filenames, ignoring case and binary
-    # files.
+    # Search for a pattern in all tracked files, ignoring case and binary files.
     gno = "grep -i -I --name-only"
 #+end_src
 

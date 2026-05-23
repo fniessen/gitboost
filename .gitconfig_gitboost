@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20260226.1534>
+# .gitconfig_gitboost, Time-stamp: <20260523.1653>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -490,8 +490,7 @@
     }; f"
 
     # Usage: git gno PATTERN [TREE]
-    # Search for a pattern in all tracked filenames, ignoring case and binary
-    # files.
+    # Search for a pattern in all tracked files, ignoring case and binary files.
     gno = "grep -i -I --name-only"
 
     ##? Usage: git unmodify [FILE_TO_RESTORE]
