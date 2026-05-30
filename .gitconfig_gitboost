@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20260530.1624>
+# .gitconfig_gitboost, Time-stamp: <20260530.1815>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -1069,6 +1069,7 @@
 
     ##? Alias for 'file-last-commit-all-local-branches'.
     wwflu = file-last-commit-all-local-branches
+    # (Where Was File Last Updated?)
 
     file-last-commit-all-local-branches2 = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
