@@ -1694,6 +1694,9 @@ area).
     # Unstage the changes to a file that were previously added to the Git
     # staging area.
     unstage = reset HEAD --
+
+    ##? Alias for 'unstage'.
+    unadd = unstage
 #+end_src
 
 ~unstage~ is the opposite of ~git add~.
@@ -3899,6 +3902,9 @@ working tree*:
     # Undo the most recent commit and keep the changes made in the commit as
     # unstaged changes in the working directory.
     uncommit-unstage = reset --mixed HEAD~1
+
+    ##? Alias for 'uncommit-unstage'.
+    uncommit-unadd = uncommit-unstage
 #+end_src
 
 #+begin_note

@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20260523.1719>
+# .gitconfig_gitboost, Time-stamp: <20260530.1624>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -559,6 +559,9 @@
     # Unstage the changes to a file that were previously added to the Git
     # staging area.
     unstage = reset HEAD --
+
+    ##? Alias for 'unstage'.
+    unadd = unstage
 
     # Usage: git staged-files
     # List files that are staged (added, modified, or deleted) and ready to be committed.
@@ -1493,6 +1496,9 @@
     # Undo the most recent commit and keep the changes made in the commit as
     # unstaged changes in the working directory.
     uncommit-unstage = reset --mixed HEAD~1
+
+    ##? Alias for 'uncommit-unstage'.
+    uncommit-unadd = uncommit-unstage
 
     # Usage: git undo
     # Undo the most recent commit and delete any changes made to the code since
