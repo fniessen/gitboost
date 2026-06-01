@@ -4598,6 +4598,14 @@ branch (if any).
     # Usage: git branches
     # Show all branches with their corresponding upstream branches and commit hashes.
     branches = "!git fetch --prune && git branch -a -vv"
+
+    branches2 = "!f() { \
+        git fetch --prune && \
+        git for-each-ref \
+            --sort=-committerdate \
+            --format='%(if)%(HEAD)%(then)*%(else) %(end) %(color:green bold)%(refname:short)%(color:reset) %(color:red)%(upstream:short)%(color:reset) %(color:red bold)%(upstream:track)%(color:reset) %(color:yellow)%(objectname:short)%(color:reset) %(contents:subject)' \
+            refs/heads refs/remotes; \
+    }; f"
 #+end_src
 
 : git gc --prune=now
