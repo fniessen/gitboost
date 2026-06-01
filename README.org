@@ -4556,14 +4556,22 @@ Push the current branch to the remote and establish tracking:
     ##? Push the current branch to the remote repository 'origin' and set it as
     ##? upstream.
     publish-branch = "!f() { \
-        branch=$(git current-branch); \
-        git push -u origin $branch; \
+        if [ $# -ne 0 ]; then \
+            printf >&2 'Usage: git publish-branch\n'; \
+            return 64; \
+        fi; \
+        current_branch=$(git current-branch); \
+        git push -u origin \"$current_branch\"; \
     }; f"
 
     ##? Usage: git unpublish-branch
     ##?
     ##? Delete the current branch from the remote repository 'origin'.
     unpublish-branch = "!f() { \
+        if [ $# -ne 0 ]; then \
+            printf >&2 'Usage: git unpublish-branch\n'; \
+            return 64; \
+        fi; \
         current_branch=$(git current-branch); \
         git delete-remote-branch \"$current_branch\"; \
     }; f"
