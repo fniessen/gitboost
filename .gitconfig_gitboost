@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20260601.2007>
+# .gitconfig_gitboost, Time-stamp: <20260601.2018>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -2309,23 +2309,27 @@
 
     ##? Usage: git lg
     ##?
-    ##? Show a graphical log of commits.
+    ##? Show the commit history as a graph for the current revision set.
+    ##? Decorations (branches and tags) are shown according to Git configuration.
     lg = log --graph
 
     ##? Usage: git lg-all-branches
     ##?
-    ##? Show a graphical log of all references with branches, and tags.
+    ##? Show the commit history graph for all local branches, remote-tracking
+    ##? branches, and tags.
     lg-all-branches = log --all --graph
 
-    ##? Usage: git lg-detail
+    ##? Usage: git lg-changes
     ##?
-    ##? Show a detailed graphical log with file changes.
-    lg-detail = log --pretty=format:'%C(green)%cr%C(reset) %C(yellow)%h%Creset %C(yellow)%d%Creset %s %C(bold blue)<%an>%Creset%n' --graph --name-status
+    ##? Show a detailed commit history graph with relative commit dates,
+    ##? authors, decorations, and the list of files changed in each commit.
+    lg-changes = log --pretty=format:'%C(green)%cr%C(reset) %C(yellow)%h%Creset %C(yellow)%d%Creset %s %C(bold blue)<%an>%Creset%n' --graph --name-status
 
     ##? Usage: git releases
     ##?
-    ##? Display a simplified commit history graph with decorations, excluding
-    ##? merge commits.
+    ##? Show a simplified history graph containing only commits referenced by
+    ##? branches or tags.
+    ##? Merge commits are excluded.
     releases = log --no-merges --all --simplify-by-decoration --graph
 
     # Draw Git revisions graph with Graphviz.
