@@ -5787,7 +5787,7 @@ fi
 See http://jonas.nitro.dk/tig/manual.html and
 http://stackoverflow.com/tags/tig/hot.
 
-To see real *timeline* of who is working on what and when:
+Graph:
 
 #+begin_src conf
     ##? Usage: git lg
