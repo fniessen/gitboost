@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20260530.1815>
+# .gitconfig_gitboost, Time-stamp: <20260601.2007>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -614,7 +614,7 @@
     ignore = "!f() { \
         PATTERN=\"$1\"; \
         if [ -z \"$PATTERN\" ]; then \
-            printf >&2 'ERROR: No pattern provided.\\nUsage: git ignore PATTERN\\n' >&2; \
+            printf >&2 'ERROR: No pattern provided.\\nUsage: git ignore PATTERN\\n'; \
             return 2; \
         fi; \
         if [ ! -e .gitignore ]; then \
@@ -2307,25 +2307,20 @@
         git diff --name-only \"$OTHER_BRANCH\"...\"$current_branch\"; \
     }; f"
 
-    ##? Usage: git log-graph
+    ##? Usage: git lg
     ##?
     ##? Show a graphical log of commits.
-    log-graph = log --graph
+    lg = log --graph
 
-    ##? Usage: git log-graph-branches-tags-remotes
+    ##? Usage: git lg-all-branches
     ##?
-    ##? Show a graphical log of commits with branches, tags, and remotes.
-    log-graph-branches-tags-remotes = log --branches --tags --remotes --date-order --format=format:'%C(yellow)%h %C(reset) %<(75,trunc)%s <%cn> (%cr) %C(red)%d' --graph
+    ##? Show a graphical log of all references with branches, and tags.
+    lg-all-branches = log --all --graph
 
-    ##? Usage: git log-graph-all
-    ##?
-    ##? Show a graphical log of all references.
-    log-graph-all-branches = log --all --graph
-
-    ##? Usage: git log-graph-detail
+    ##? Usage: git lg-detail
     ##?
     ##? Show a detailed graphical log with file changes.
-    log-graph-detail = log --pretty=format:'%C(green)%cr%C(reset) %C(yellow)%h%Creset %C(yellow)%d%Creset %s %C(bold blue)<%an>%Creset%n' --graph --name-status
+    lg-detail = log --pretty=format:'%C(green)%cr%C(reset) %C(yellow)%h%Creset %C(yellow)%d%Creset %s %C(bold blue)<%an>%Creset%n' --graph --name-status
 
     ##? Usage: git releases
     ##?

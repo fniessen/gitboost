@@ -1805,7 +1805,7 @@ Quickly add a file or directory to =.gitignore=:
     ignore = "!f() { \
         PATTERN=\"$1\"; \
         if [ -z \"$PATTERN\" ]; then \
-            printf >&2 'ERROR: No pattern provided.\\nUsage: git ignore PATTERN\\n' >&2; \
+            printf >&2 'ERROR: No pattern provided.\\nUsage: git ignore PATTERN\\n'; \
             return 2; \
         fi; \
         if [ ! -e .gitignore ]; then \
@@ -5790,25 +5790,20 @@ http://stackoverflow.com/tags/tig/hot.
 To see real *timeline* of who is working on what and when:
 
 #+begin_src conf
-    ##? Usage: git log-graph
+    ##? Usage: git lg
     ##?
     ##? Show a graphical log of commits.
-    log-graph = log --graph
+    lg = log --graph
 
-    ##? Usage: git log-graph-branches-tags-remotes
+    ##? Usage: git lg-all-branches
     ##?
-    ##? Show a graphical log of commits with branches, tags, and remotes.
-    log-graph-branches-tags-remotes = log --branches --tags --remotes --date-order --format=format:'%C(yellow)%h %C(reset) %<(75,trunc)%s <%cn> (%cr) %C(red)%d' --graph
+    ##? Show a graphical log of all references with branches, and tags.
+    lg-all-branches = log --all --graph
 
-    ##? Usage: git log-graph-all
-    ##?
-    ##? Show a graphical log of all references.
-    log-graph-all-branches = log --all --graph
-
-    ##? Usage: git log-graph-detail
+    ##? Usage: git lg-detail
     ##?
     ##? Show a detailed graphical log with file changes.
-    log-graph-detail = log --pretty=format:'%C(green)%cr%C(reset) %C(yellow)%h%Creset %C(yellow)%d%Creset %s %C(bold blue)<%an>%Creset%n' --graph --name-status
+    lg-detail = log --pretty=format:'%C(green)%cr%C(reset) %C(yellow)%h%Creset %C(yellow)%d%Creset %s %C(bold blue)<%an>%Creset%n' --graph --name-status
 #+end_src
 
 https://fossil-scm.org/home/help?cmd=leaves
