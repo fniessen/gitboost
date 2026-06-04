@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20260601.2204>
+# .gitconfig_gitboost, Time-stamp: <20260604.1809>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -1235,6 +1235,12 @@
 
     # Minimal (char-level), whitespace-insensitive diff of staged changes (index vs HEAD).
     mindfc = diff -w --word-diff-regex=. --color-words -U0 --cached
+
+    # Graphical diff (working tree vs index).
+    dt = difftool
+
+    # Graphical diff of staged changes (index vs HEAD).
+    dtc = difftool --cached
 
     # Usage: git dir-diff
     # Open Meld with directory comparison for all modified files.

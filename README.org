@@ -3253,6 +3253,23 @@ your commit changes (to make sure you don't need to use the undo commands):
     mindfc = diff -w --word-diff-regex=. --color-words -U0 --cached
 #+end_src
 
+*** Graphical diff tool
+
+For users who prefer a graphical comparison tool instead of terminal output:
+
+#+begin_src conf
+    # Graphical diff (working tree vs index).
+    dt = difftool
+
+    # Graphical diff of staged changes (index vs HEAD).
+    dtc = difftool --cached
+#+end_src
+
+The graphical diff tool configured through =git difftool= depends on your Git
+configuration (for example, Meld, Beyond Compare, KDiff3, WinMerge, VS Code,
+etc.). It can be useful when reviewing complex changes, moved code, or files
+that are difficult to inspect in a terminal diff.
+
 *** Performing directory diffs (Comparing folders)
 
 The following command makes it similar to the =git-meld.pl= script here:
