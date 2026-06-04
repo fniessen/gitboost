@@ -290,16 +290,18 @@ commenting out can be swapped over if I want to use the ~$BASE~ line instead.
 
 ** External diff tool
 
-Select a diff tool to visualize the differences.
+Select a diff tool to visualize differences outside the terminal.
 
 #+begin_src conf
 [difftool]
-    # Set prompt to false to avoid asking for confirmation before launching the diff tool.
+    # Set prompt to false to avoid asking for confirmation before launching the
+    # diff tool.
     prompt = false
 #+end_src
 
-Commonly used tools include ~vimdiff~, ~meld~, ~kdiff3~, ~tkdiff~, etc. Choose one
-according to your preference and availability.
+Commonly used tools include ~vimdiff~, ~meld~, ~kdiff3~, ~tkdiff~, Sublime Merge, Visual
+Studio Code, and many others. Choose one according to your preference and
+availability.
 
 *** Use [[https://meldmerge.org/][Meld]] as Git ~difftool~
 
@@ -308,9 +310,26 @@ according to your preference and availability.
     tool = meld
 
 [difftool "meld"]
-    # Set the command to launch "meld" with the two input files as arguments.
+    # Launch Meld with the two files to compare.
     cmd = meld "$LOCAL" "$REMOTE"
 #+end_src
+
+*** Use Sublime Merge as Git ~difftool~
+
+#+begin_src conf :tangle no
+[diff]
+    tool = smerge
+
+[difftool "smerge"]
+    # Open the diff directly in Sublime Merge.
+    cmd = smerge mergetool \"$LOCAL\" \"$REMOTE\"
+
+    # Trust the exit code returned by Sublime Merge.
+    trustExitCode = true
+#+end_src
+
+If the ~smerge~ command is not available in your shell's search path, replace it
+with the full path to the Sublime Merge executable.
 
 *** Use Emacs as Git ~difftool~
 
@@ -321,6 +340,9 @@ according to your preference and availability.
 [difftool "emacs"]
     cmd = git-ediff "$LOCAL" "$REMOTE"
 #+end_src
+
+The Emacs configuration assumes that the helper script ~git-ediff~ is available in
+your search path.
 
 ** External editor
 

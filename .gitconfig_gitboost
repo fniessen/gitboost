@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20260604.1809>
+# .gitconfig_gitboost, Time-stamp: <20260604.1902>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -38,7 +38,8 @@
     keepBackup = false
 
 [difftool]
-    # Set prompt to false to avoid asking for confirmation before launching the diff tool.
+    # Set prompt to false to avoid asking for confirmation before launching the
+    # diff tool.
     prompt = false
 
 [diff]
