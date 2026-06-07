@@ -2956,7 +2956,7 @@ each commit:
 *** When Was this File Last Updated
 
 To find the most recent commit (chronologically) that modified a file across /all/
-branches, use the following alias:
+known branches, use the following alias:
 
 #+begin_src conf
     ##? Usage: git file-last-commit FILE_PATH
@@ -2972,45 +2972,55 @@ branches, use the following alias:
     }; f"
 #+end_src
 
-#+begin_warning
-Before using the following alias, please ensure you *update all local
-branches*. This requires checking out each branch in succession.
-#+end_warning
+The ~--all~ option searches all references known to the local repository,
+including:
 
-*************** TODO Or use another alias for updating all local branches...
+- local branches,
+- remote-tracking branches (for example ~origin/main~),
+- tags.
+
+To ensure the results reflect the latest state of the remote repositories,
+*update your references* first:
+
+#+begin_src shell :tangle no
+git fetch --all --prune
+#+end_src
 
 Use the following alias to show the *most recent commits* for a specific file or
-directory across all local branches:
+directory across all known branches:
 
 #+begin_src conf
-    ##? Usage: git file-last-commit-all-local-branches FILE_PATH
+    ##? Usage: git file-last-commit-all-branches FILE_PATH
     ##?
     ##? For each local branch, show only the most recent commit that touched
     ##? this file, sorted by date.
-    file-last-commit-all-local-branches = "!f() { \
+    file-last-commit-all-branches = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git file-last-commit-all-local-branches FILE_PATH\n'; \
+            printf >&2 'Usage: git file-last-commit-all-branches FILE_PATH\n'; \
             return 64; \
         fi; \
         FILE_PATH=\"$1\"; \
-        local_branches=$(git local-branches); \
-        for branch in $local_branches; do \
+        refs=$(git for-each-ref --format='%(refname:short)' refs/heads refs/remotes); \
+        for ref in $refs; do \
+            case \"$ref\" in \
+                */HEAD) continue ;; \
+            esac; \
             printf \"$(git log --follow --decorate=no -1 \
-                               --color=always $branch -- \"$FILE_PATH\") $(tput bold)$(tput setaf 2)$branch$(tput sgr0)\n\"; \
+                               --color=always \"$ref\" -- \"$FILE_PATH\") $(tput bold)$(tput setaf 2)$ref$(tput sgr0)\n\"; \
         done | sort -r | sed 's#^[0-9]*:##g'; \
     }; f"
 
-    ##? Alias for 'file-last-commit-all-local-branches'.
-    wwflu = file-last-commit-all-local-branches
+    ##? Alias for 'file-last-commit-all-branches'.
+    wwflu = file-last-commit-all-branches
     # (Where Was File Last Updated?)
 #+end_src
 
-: git file-last-commit-all-local-branches schema/ab-products/bldgops/common/console/ab-bldgops-console-wr-ds.axvw
+: git file-last-commit-all-branches schema/ab-products/bldgops/common/console/ab-bldgops-console-wr-ds.axvw
 
 #+begin_src conf
-    file-last-commit-all-local-branches2 = "!f() { \
+    file-last-commit-all-local-branches-2 = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git file-last-commit-all-local-branches2 FILE_PATH\n'; \
+            printf >&2 'Usage: git file-last-commit-all-local-branches-2 FILE_PATH\n'; \
             return 64; \
         fi; \
         FILE_PATH=\"$1\"; \

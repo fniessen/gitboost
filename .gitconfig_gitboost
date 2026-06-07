@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20260604.1902>
+# .gitconfig_gitboost, Time-stamp: <20260607.0936>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -1051,30 +1051,33 @@
         git log -n 1 --all --date-order -- \"$FILE_PATH\"; \
     }; f"
 
-    ##? Usage: git file-last-commit-all-local-branches FILE_PATH
+    ##? Usage: git file-last-commit-all-branches FILE_PATH
     ##?
     ##? For each local branch, show only the most recent commit that touched
     ##? this file, sorted by date.
-    file-last-commit-all-local-branches = "!f() { \
+    file-last-commit-all-branches = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git file-last-commit-all-local-branches FILE_PATH\n'; \
+            printf >&2 'Usage: git file-last-commit-all-branches FILE_PATH\n'; \
             return 64; \
         fi; \
         FILE_PATH=\"$1\"; \
-        local_branches=$(git local-branches); \
-        for branch in $local_branches; do \
+        refs=$(git for-each-ref --format='%(refname:short)' refs/heads refs/remotes); \
+        for ref in $refs; do \
+            case \"$ref\" in \
+                */HEAD) continue ;; \
+            esac; \
             printf \"$(git log --follow --decorate=no -1 \
-                               --color=always $branch -- \"$FILE_PATH\") $(tput bold)$(tput setaf 2)$branch$(tput sgr0)\n\"; \
+                               --color=always \"$ref\" -- \"$FILE_PATH\") $(tput bold)$(tput setaf 2)$ref$(tput sgr0)\n\"; \
         done | sort -r | sed 's#^[0-9]*:##g'; \
     }; f"
 
-    ##? Alias for 'file-last-commit-all-local-branches'.
-    wwflu = file-last-commit-all-local-branches
+    ##? Alias for 'file-last-commit-all-branches'.
+    wwflu = file-last-commit-all-branches
     # (Where Was File Last Updated?)
 
-    file-last-commit-all-local-branches2 = "!f() { \
+    file-last-commit-all-local-branches-2 = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git file-last-commit-all-local-branches2 FILE_PATH\n'; \
+            printf >&2 'Usage: git file-last-commit-all-local-branches-2 FILE_PATH\n'; \
             return 64; \
         fi; \
         FILE_PATH=\"$1\"; \
