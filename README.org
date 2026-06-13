@@ -187,6 +187,8 @@ just-created branch can be renamed via:
 
 ** Merge tool
 
+*** Overview
+
 When a merge results in conflicts, ~git mergetool~ can launch a graphical merge
 tool to help resolve them.
 
@@ -196,11 +198,7 @@ tool to help resolve them.
     conflictstyle = diff3
 #+end_src
 
-Recommended tools:
-
-- Small changes: ~git diff~, ~vc-diff~
-- Medium changes: Magit
-- Large or complex merges: Ediff, Meld, VS Code Merge Editor, or DeltaWalker
+*** Merge file roles
 
 Firstly, here is what the parameters (used below) mean:
 
@@ -213,6 +211,14 @@ Firstly, here is what the parameters (used below) mean:
 
 - ~$MERGED~ is the working file that Git expects you to edit and save as the
   conflict resolution result.
+
+*** Recommended merge tools
+
+Choosing the right tool:
+
+- Small changes: ~git diff~, ~vc-diff~
+- Medium changes: Magit
+- Large or complex merges: *Ediff*, *Meld*, *VS Code* Merge Editor, or *DeltaWalker*
 
 *** Use Emacs (Ediff) as a Git merge tool
 
@@ -297,43 +303,6 @@ Commonly used tools include ~vimdiff~, ~meld~, ~kdiff3~, ~tkdiff~, Sublime Merge
 Studio Code, and many others. Choose one according to your preference and
 availability.
 
-*** Use [[https://meldmerge.org/][Meld]] as Git diff tool
-
-#+begin_src conf :tangle no
-[diff]
-    tool = meld
-
-[difftool "meld"]
-    # Launch Meld with the two files to compare.
-    cmd = meld "$LOCAL" "$REMOTE"
-#+end_src
-
-*** Use Sublime Merge as Git diff tool
-
-#+begin_src conf :tangle no
-[diff]
-    tool = smerge
-
-[difftool "smerge"]
-    # Open the diff directly in Sublime Merge.
-    cmd = smerge "$LOCAL" "$REMOTE"
-#+end_src
-
-
-#+begin_src conf :tangle no
-[diff]
-    tool = smerge
-
-[difftool "smerge"]
-    # Adjust this command depending on the Sublime Merge version and platform.
-    cmd = smerge "$LOCAL" "$REMOTE"
-    # cmd = "C:/Program Files/Sublime Merge/smerge.exe" "$LOCAL" "$REMOTE"
-    # cmd = '/c/Program Files/Sublime Merge/smerge.exe' "$LOCAL" "$REMOTE"
-#+end_src
-
-If the ~smerge~ command is not available in your shell's search path, replace it
-with the full path to the Sublime Merge executable.
-
 *** Use Emacs as Git diff tool
 
 #+begin_src conf
@@ -352,6 +321,17 @@ not use such a helper, use one of the alternative commands shown below.
     # cmd = emacsclient -c --eval "(ediff-files \\\"$LOCAL\\\" \\\"$REMOTE\\\")"
 #+end_src
 
+*** Use Meld as Git diff tool
+
+#+begin_src conf :tangle no
+[diff]
+    tool = meld
+
+[difftool "meld"]
+    # Launch Meld with the two files to compare.
+    cmd = meld "$LOCAL" "$REMOTE"
+#+end_src
+
 *** Use VS Code as Git diff tool
 
 #+begin_src conf :tangle no
@@ -361,6 +341,31 @@ not use such a helper, use one of the alternative commands shown below.
 [difftool "vscode"]
     cmd = code --wait --diff "$LOCAL" "$REMOTE"
 #+end_src
+
+*** Use Sublime Merge as Git diff tool
+
+#+begin_src conf :tangle no
+[diff]
+    tool = smerge
+
+[difftool "smerge"]
+    # Open the diff directly in Sublime Merge.
+    cmd = smerge "$LOCAL" "$REMOTE"
+#+end_src
+
+#+begin_src conf :tangle no
+[diff]
+    tool = smerge
+
+[difftool "smerge"]
+    # Adjust this command depending on the Sublime Merge version and platform.
+    cmd = smerge "$LOCAL" "$REMOTE"
+    # cmd = "C:/Program Files/Sublime Merge/smerge.exe" "$LOCAL" "$REMOTE"
+    # cmd = '/c/Program Files/Sublime Merge/smerge.exe' "$LOCAL" "$REMOTE"
+#+end_src
+
+If the ~smerge~ command is not available in your shell's search path, replace it
+with the full path to the Sublime Merge executable.
 
 ** External editor
 
