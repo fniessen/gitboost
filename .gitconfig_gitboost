@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20260613.1541>
+# .gitconfig_gitboost, Time-stamp: <20260613.1618>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -27,10 +27,9 @@
     tool = meld
 
 [mergetool "meld"]
-    # Run meld with the required arguments.
-    cmd = meld --diff "$LOCAL" "$MERGED" "$REMOTE" --diff "$BASE" "$LOCAL" --diff "$BASE" "$REMOTE" --output "$MERGED"
-    # cmd = meld --diff "$LOCAL" "$BASE" "$REMOTE" --diff "$BASE" "$LOCAL" --diff "$BASE" "$REMOTE" --output "$MERGED"
-    # Don't keep backup files.
+    cmd = meld "$LOCAL" "$MERGED" "$REMOTE" --output "$MERGED"
+
+    # Remove backup files such as *.orig after a successful merge.
     keepBackup = false
 
 [difftool]
@@ -43,6 +42,7 @@
 
 [difftool "emacs"]
     cmd = git-ediff "$LOCAL" "$REMOTE"
+
     # cmd = emacs --eval "(ediff-files \\\"$LOCAL\\\" \\\"$REMOTE\\\")"
     # cmd = emacsclient -c --eval "(ediff-files \\\"$LOCAL\\\" \\\"$REMOTE\\\")"
 

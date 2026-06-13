@@ -187,7 +187,8 @@ just-created branch can be renamed via:
 
 ** Merge tool
 
-How to resolve merge conflicts in Git?  Try ~git mergetool~.
+When a merge results in conflicts, ~git mergetool~ can launch a graphical merge
+tool to help resolve them.
 
 #+begin_src conf :tangle no
 [merge]
@@ -195,26 +196,25 @@ How to resolve merge conflicts in Git?  Try ~git mergetool~.
     conflictstyle = diff3
 #+end_src
 
-- For small changes, ~git diff~ and ~vc-diff~ are perfect.
-- For medium changes, ~magit~ is perfect.
-- For large changes, [[https://www.deltawalker.com/][DeltaWalker]] (39.95 USD) is perfect.
+Recommended tools:
+
+- Small changes: ~git diff~, ~vc-diff~
+- Medium changes: Magit
+- Large or complex merges: Ediff, Meld, VS Code Merge Editor, or DeltaWalker
 
 Firstly, here is what the parameters (used below) mean:
 
-- ~$LOCAL~ is the file in the *current branch* (e.g. ~master~).
+- ~$LOCAL~ is the version from the *current branch* (the branch you have checked
+  out).
 
-- ~$REMOTE~ is the file in the *branch being merged* (e.g. ~BRANCH_NAME~).
+- ~$REMOTE~ is the version from the *branch being merged*.
 
-- ~$MERGED~ is the *partially merged file* with the merge conflict information in
-  it.
+- ~$BASE~ is the *common ancestor* of ~$LOCAL~ and ~$REMOTE~.
 
-- ~$BASE~ is the *common ancestor* of ~$LOCAL~ and ~$REMOTE~, this is to say the file as
-  it was (before both changes) when the branch containing ~$REMOTE~ was originally
-  created.
+- ~$MERGED~ is the working file that Git expects you to edit and save as the
+  conflict resolution result.
 
-*** Emacs as a Git merge tool
-
-Ediff or Emerge?  Or Magit???
+*** Use Emacs (Ediff) as a Git merge tool
 
 #+begin_src conf :tangle no
 [merge]
@@ -222,11 +222,16 @@ Ediff or Emerge?  Or Magit???
 
 [mergetool "ediff"]
     cmd = emacsclient -c -a "" --eval "(ediff-merge-files-with-ancestor \\\"$LOCAL\\\" \\\"$REMOTE\\\" \\\"$BASE\\\" nil \\\"$MERGED\\\")"
+
     trustExitCode = true
+
+    # Remove backup files such as *.orig after a successful merge.
     keepBackup = false
 #+end_src
 
-*** Meld as Git merge tool
+The ~-a ""~ option starts Emacs automatically if no Emacs server is running.
+
+*** Use Meld as Git merge tool
 
 *How do I set up and use Meld as my git mergetool?*
 See https://stackoverflow.com/questions/34119866/setting-up-and-using-meld-as-your-git-difftool-and-mergetool.
@@ -235,61 +240,38 @@ See ~auto-merge~ in
 https://stackoverflow.com/questions/11133290/git-merging-using-meld (first and
 second solution).
 
-Use [[https://meldmerge.org/][Meld]] as Git ~mergetool:~
+For most users:
 
 #+begin_src conf
 [merge]
     # Use meld as the merge tool.
     tool = meld
-#+end_src
 
-I suggest you use either:
-
-#+begin_src conf :tangle no
 [mergetool "meld"]
     cmd = meld "$LOCAL" "$MERGED" "$REMOTE" --output "$MERGED"
-#+end_src
 
-or:
-
-#+begin_src conf :tangle no
-[mergetool "meld"]
-    cmd = meld "$LOCAL" "$BASE" "$REMOTE" --output "$MERGED"
-#+end_src
-
-The choice is whether to use ~$MERGED~ or ~$BASE~ in between ~$LOCAL~ and ~$REMOTE~.
-
-Either way, Meld will display 3 panes with:
-
-- ~$LOCAL~ in the left pane,
-- ~$REMOTE~ in the right pane and
-- either ~$MERGED~ or ~$BASE~ in the middle pane.
-
-In BOTH cases, *the middle pane is the file that you should edit to resolve the
-merge conflicts*.  The difference is just in which starting edit position you'd
-prefer:
-
-- ~$MERGED~ for the file which contains the partially merged file with the merge
-  conflict information or
-
-- ~$BASE~ for the shared commit ancestor of ~$LOCAL~ and ~$REMOTE~.
-
-#+begin_note
-Since both cmd lines can be useful, I keep them both in my =.gitconfig= file. Most
-of the time I use the ~$MERGED~ line and the ~$BASE~ line is commented out, but the
-commenting out can be swapped over if I want to use the ~$BASE~ line instead.
-#+end_note
-
-#+begin_src conf
-[mergetool "meld"]
-    # Run meld with the required arguments.
-    cmd = meld --diff "$LOCAL" "$MERGED" "$REMOTE" --diff "$BASE" "$LOCAL" --diff "$BASE" "$REMOTE" --output "$MERGED"
-    # cmd = meld --diff "$LOCAL" "$BASE" "$REMOTE" --diff "$BASE" "$LOCAL" --diff "$BASE" "$REMOTE" --output "$MERGED"
-    # Don't keep backup files.
+    # Remove backup files such as *.orig after a successful merge.
     keepBackup = false
 #+end_src
 
+The most common configuration uses ~$MERGED~ as the center pane and as the
+editable merge result. This lets you *start from Git's partial merge result* and
+*save the final conflict resolution* back to the file Git expects.
+
+For complex merges, you may optionally add supplementary diff views showing how
+~$LOCAL~ and ~$REMOTE~ evolved from ~$BASE~:
+
+#+begin_src conf :tangle no
+[mergetool "meld"]
+    cmd = meld --diff "$LOCAL" "$MERGED" "$REMOTE" \
+               --diff "$BASE" "$LOCAL" \
+               --diff "$BASE" "$REMOTE" \
+               --output "$MERGED"
+#+end_src
+
 *** Use VS Code as Git merge tool
+
+VS Code uses its built-in Merge Editor when resolving conflicts.
 
 #+begin_src conf :tangle no
 [merge]
@@ -334,12 +316,19 @@ availability.
 
 [difftool "smerge"]
     # Open the diff directly in Sublime Merge.
-    cmd = smerge mergetool \"$LOCAL\" \"$REMOTE\"
-    # cmd = "C:/Program Files/Sublime Merge/smerge.exe" mergetool "$LOCAL" "$REMOTE"
-    # cmd = '/c/Program Files/Sublime Merge/smerge.exe' mergetool "$LOCAL" "$REMOTE"
+    cmd = smerge "$LOCAL" "$REMOTE"
+#+end_src
 
-    # Trust the exit code returned by Sublime Merge.
-    trustExitCode = true
+
+#+begin_src conf :tangle no
+[diff]
+    tool = smerge
+
+[difftool "smerge"]
+    # Adjust this command depending on the Sublime Merge version and platform.
+    cmd = smerge "$LOCAL" "$REMOTE"
+    # cmd = "C:/Program Files/Sublime Merge/smerge.exe" "$LOCAL" "$REMOTE"
+    # cmd = '/c/Program Files/Sublime Merge/smerge.exe' "$LOCAL" "$REMOTE"
 #+end_src
 
 If the ~smerge~ command is not available in your shell's search path, replace it
@@ -353,12 +342,15 @@ with the full path to the Sublime Merge executable.
 
 [difftool "emacs"]
     cmd = git-ediff "$LOCAL" "$REMOTE"
+#+end_src
+
+The ~git-ediff~ helper is a custom wrapper script around ~ediff-files~. If you do
+not use such a helper, use one of the alternative commands shown below.
+
+#+begin_src conf
     # cmd = emacs --eval "(ediff-files \\\"$LOCAL\\\" \\\"$REMOTE\\\")"
     # cmd = emacsclient -c --eval "(ediff-files \\\"$LOCAL\\\" \\\"$REMOTE\\\")"
 #+end_src
-
-The Emacs configuration assumes that the helper script ~git-ediff~ is available in
-your search path.
 
 *** Use VS Code as Git diff tool
 
