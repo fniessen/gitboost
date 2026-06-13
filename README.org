@@ -189,7 +189,7 @@ just-created branch can be renamed via:
 
 How to resolve merge conflicts in Git?  Try ~git mergetool~.
 
-#+begin_src conf
+#+begin_src conf :tangle no
 [merge]
     # Show a three-way diff in case of conflicts.
     conflictstyle = diff3
@@ -1626,6 +1626,8 @@ committed version, removing all the changes detected by Git.
 
 If you decide that the changes you have made since the last commit ought to be
 thrown away, the alias to use is ~unmodify~:
+
+*WARNING Unmodify ne marche qu'avec un FILE_PATH complet, depuis la racine du repo*
 
 #+begin_src conf
     ##? Usage: git unmodify [FILE_TO_RESTORE]
