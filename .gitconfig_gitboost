@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20260613.1428>
+# .gitconfig_gitboost, Time-stamp: <20260613.1541>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -43,6 +43,8 @@
 
 [difftool "emacs"]
     cmd = git-ediff "$LOCAL" "$REMOTE"
+    # cmd = emacs --eval "(ediff-files \\\"$LOCAL\\\" \\\"$REMOTE\\\")"
+    # cmd = emacsclient -c --eval "(ediff-files \\\"$LOCAL\\\" \\\"$REMOTE\\\")"
 
 [core]
     # editor = notepad++.exe -multiInst -notabbar -nosession -noPlugin

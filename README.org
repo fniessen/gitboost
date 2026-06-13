@@ -185,7 +185,7 @@ just-created branch can be renamed via:
 
 : git branch -m NAME
 
-** External merge tool
+** Merge tool
 
 How to resolve merge conflicts in Git?  Try ~git mergetool~.
 
@@ -212,7 +212,7 @@ Firstly, here is what the parameters (used below) mean:
   it was (before both changes) when the branch containing ~$REMOTE~ was originally
   created.
 
-*** Emacs as a Git mergetool
+*** Emacs as a Git merge tool
 
 Ediff or Emerge?  Or Magit???
 
@@ -221,11 +221,12 @@ Ediff or Emerge?  Or Magit???
     tool = ediff
 
 [mergetool "ediff"]
-    cmd = emacsclient -c -a \"\"  --eval \"(ediff-merge-files-with-ancestor \\\"$LOCAL\\\" \\\"$REMOTE\\\" \\\"$BASE\\\" nil \\\"$MERGED\\\")\"
+    cmd = emacsclient -c -a "" --eval "(ediff-merge-files-with-ancestor \\\"$LOCAL\\\" \\\"$REMOTE\\\" \\\"$BASE\\\" nil \\\"$MERGED\\\")"
+    trustExitCode = true
     keepBackup = false
 #+end_src
 
-*** Meld as Git mergetool
+*** Meld as Git merge tool
 
 *How do I set up and use Meld as my git mergetool?*
 See https://stackoverflow.com/questions/34119866/setting-up-and-using-meld-as-your-git-difftool-and-mergetool.
@@ -288,7 +289,18 @@ commenting out can be swapped over if I want to use the ~$BASE~ line instead.
     keepBackup = false
 #+end_src
 
-** External diff tool
+*** Use VS Code as Git merge tool
+
+#+begin_src conf :tangle no
+[merge]
+    tool = vscode
+
+[mergetool "vscode"]
+    cmd = code --wait "$MERGED"
+    trustExitCode = true
+#+end_src
+
+** Diff tool
 
 Select a diff tool to visualize differences outside the terminal.
 
@@ -303,7 +315,7 @@ Commonly used tools include ~vimdiff~, ~meld~, ~kdiff3~, ~tkdiff~, Sublime Merge
 Studio Code, and many others. Choose one according to your preference and
 availability.
 
-*** Use [[https://meldmerge.org/][Meld]] as Git ~difftool~
+*** Use [[https://meldmerge.org/][Meld]] as Git diff tool
 
 #+begin_src conf :tangle no
 [diff]
@@ -314,7 +326,7 @@ availability.
     cmd = meld "$LOCAL" "$REMOTE"
 #+end_src
 
-*** Use Sublime Merge as Git ~difftool~
+*** Use Sublime Merge as Git diff tool
 
 #+begin_src conf :tangle no
 [diff]
@@ -323,6 +335,8 @@ availability.
 [difftool "smerge"]
     # Open the diff directly in Sublime Merge.
     cmd = smerge mergetool \"$LOCAL\" \"$REMOTE\"
+    # cmd = "C:/Program Files/Sublime Merge/smerge.exe" mergetool "$LOCAL" "$REMOTE"
+    # cmd = '/c/Program Files/Sublime Merge/smerge.exe' mergetool "$LOCAL" "$REMOTE"
 
     # Trust the exit code returned by Sublime Merge.
     trustExitCode = true
@@ -331,7 +345,7 @@ availability.
 If the ~smerge~ command is not available in your shell's search path, replace it
 with the full path to the Sublime Merge executable.
 
-*** Use Emacs as Git ~difftool~
+*** Use Emacs as Git diff tool
 
 #+begin_src conf
 [diff]
@@ -339,10 +353,22 @@ with the full path to the Sublime Merge executable.
 
 [difftool "emacs"]
     cmd = git-ediff "$LOCAL" "$REMOTE"
+    # cmd = emacs --eval "(ediff-files \\\"$LOCAL\\\" \\\"$REMOTE\\\")"
+    # cmd = emacsclient -c --eval "(ediff-files \\\"$LOCAL\\\" \\\"$REMOTE\\\")"
 #+end_src
 
 The Emacs configuration assumes that the helper script ~git-ediff~ is available in
 your search path.
+
+*** Use VS Code as Git diff tool
+
+#+begin_src conf :tangle no
+[diff]
+    tool = vscode
+
+[difftool "vscode"]
+    cmd = code --wait --diff "$LOCAL" "$REMOTE"
+#+end_src
 
 ** External editor
 
