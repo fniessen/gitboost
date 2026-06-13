@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20260613.1618>
+# .gitconfig_gitboost, Time-stamp: <20260613.1637>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -44,7 +44,7 @@
     cmd = git-ediff "$LOCAL" "$REMOTE"
 
     # cmd = emacs --eval "(ediff-files \\\"$LOCAL\\\" \\\"$REMOTE\\\")"
-    # cmd = emacsclient -c --eval "(ediff-files \\\"$LOCAL\\\" \\\"$REMOTE\\\")"
+    # cmd = emacsclient --eval "(ediff-files \\\"$LOCAL\\\" \\\"$REMOTE\\\")"
 
 [core]
     # editor = notepad++.exe -multiInst -notabbar -nosession -noPlugin
@@ -63,7 +63,7 @@
     # editor = sh -c 'for cmd in emacsclient emacs; do command -v $cmd > /dev/null 2>&1 && exec $cmd && echo \"Using $cmd as the editor.\" && break; done; echo \"No suitable editor found. Please install Emacs.\"'
     # # Syntax error: Unterminated quoted string
 
-    # Set Emacsclient as the default editor.
+    # Reuse a running Emacs server, or start Emacs if none is available.
     editor = emacsclient -a emacs
 
     # Set Git pager to ignore ^M and use less with custom flags.

@@ -227,7 +227,8 @@ Choosing the right tool:
     tool = ediff
 
 [mergetool "ediff"]
-    cmd = emacsclient -c -a "" --eval "(ediff-merge-files-with-ancestor \\\"$LOCAL\\\" \\\"$REMOTE\\\" \\\"$BASE\\\" nil \\\"$MERGED\\\")"
+    # Launch Ediff, starting Emacs if no server is running.
+    cmd = emacsclient -a emacs --eval "(ediff-merge-files-with-ancestor \\\"$LOCAL\\\" \\\"$REMOTE\\\" \\\"$BASE\\\" nil \\\"$MERGED\\\")"
 
     trustExitCode = true
 
@@ -299,9 +300,10 @@ Select a diff tool to visualize differences outside the terminal.
     prompt = false
 #+end_src
 
-Commonly used tools include ~vimdiff~, ~meld~, ~kdiff3~, ~tkdiff~, Sublime Merge, Visual
-Studio Code, and many others. Choose one according to your preference and
-availability.
+Git supports many external diff tools, including terminal-based tools such as
+~vimdiff~ and graphical applications such as Meld, Sublime Merge, and Visual
+Studio Code.  Choose one according to your preferences and the tools available
+on your system.
 
 *** Use Emacs as Git diff tool
 
@@ -318,7 +320,7 @@ not use such a helper, use one of the alternative commands shown below.
 
 #+begin_src conf
     # cmd = emacs --eval "(ediff-files \\\"$LOCAL\\\" \\\"$REMOTE\\\")"
-    # cmd = emacsclient -c --eval "(ediff-files \\\"$LOCAL\\\" \\\"$REMOTE\\\")"
+    # cmd = emacsclient --eval "(ediff-files \\\"$LOCAL\\\" \\\"$REMOTE\\\")"
 #+end_src
 
 *** Use Meld as Git diff tool
@@ -344,14 +346,7 @@ not use such a helper, use one of the alternative commands shown below.
 
 *** Use Sublime Merge as Git diff tool
 
-#+begin_src conf :tangle no
-[diff]
-    tool = smerge
-
-[difftool "smerge"]
-    # Open the diff directly in Sublime Merge.
-    cmd = smerge "$LOCAL" "$REMOTE"
-#+end_src
+Open the diff directly in Sublime Merge:
 
 #+begin_src conf :tangle no
 [diff]
@@ -360,12 +355,15 @@ not use such a helper, use one of the alternative commands shown below.
 [difftool "smerge"]
     # Adjust this command depending on the Sublime Merge version and platform.
     cmd = smerge "$LOCAL" "$REMOTE"
-    # cmd = "C:/Program Files/Sublime Merge/smerge.exe" "$LOCAL" "$REMOTE"
-    # cmd = '/c/Program Files/Sublime Merge/smerge.exe' "$LOCAL" "$REMOTE"
 #+end_src
 
 If the ~smerge~ command is not available in your shell's search path, replace it
 with the full path to the Sublime Merge executable.
+
+#+begin_src conf :tangle no
+    # cmd = "C:/Program Files/Sublime Merge/smerge.exe" "$LOCAL" "$REMOTE"
+    # cmd = '/c/Program Files/Sublime Merge/smerge.exe' "$LOCAL" "$REMOTE"
+#+end_src
 
 ** External editor
 
@@ -397,7 +395,7 @@ Supported editors include:
     # editor = sh -c 'for cmd in emacsclient emacs; do command -v $cmd > /dev/null 2>&1 && exec $cmd && echo \"Using $cmd as the editor.\" && break; done; echo \"No suitable editor found. Please install Emacs.\"'
     # # Syntax error: Unterminated quoted string
 
-    # Set Emacsclient as the default editor.
+    # Reuse a running Emacs server, or start Emacs if none is available.
     editor = emacsclient -a emacs
 #+end_src
 
