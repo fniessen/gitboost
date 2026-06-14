@@ -7249,16 +7249,19 @@ You can do ~git merge --abort~ after seeing that there are conflicts.
 Run ~merge-check~ (before ~merge~) to check for any conflicts beforehand.
 
 #+begin_src conf
-    ##? Usage: git merge-check BRANCH_NAME
+    ##? Usage: git merge-check BRANCH_TO_MERGE
     ##?
     ##? Check if a branch merges without conflicts; leaves no changes behind.
+    ##?
+    ##? Example:
+    ##?   git merge-check feature
     merge-check = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git merge-check BRANCH_NAME\n'; \
+            printf >&2 'Usage: git merge-check BRANCH_TO_MERGE\n'; \
             return 64; \
         fi; \
-        BRANCH_NAME=\"$1\"; \
-        git merge --no-commit --no-ff \"$BRANCH_NAME\"; \
+        BRANCH_TO_MERGE=\"$1\"; \
+        git merge --no-commit --no-ff \"$BRANCH_TO_MERGE\"; \
         status=$?; \
         if git rev-parse -q --verify MERGE_HEAD > /dev/null; then \
             git merge --abort; \
@@ -7269,41 +7272,6 @@ Run ~merge-check~ (before ~merge~) to check for any conflicts beforehand.
             printf 'Merge has conflicts or failed.\n'; \
         fi; \
         return $status; \
-    }; f"
-#+end_src
-
-#+begin_src conf
-    ##? Usage: git dry-merge1 BRANCH_TO_MERGE
-    ##?
-    ##? Simulate a "dry run" merge of a branch into the current branch.
-    ##?
-    ##? Example:
-    ##?   git dry-merge1 feature # Merge the `feature` branch without committing the changes.
-    dry-merge1 = "!f() { \
-        if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git dry-merge1 BRANCH_TO_MERGE\n'; \
-            return 64; \
-        fi; \
-        BRANCH_TO_MERGE=\"$1\"; \
-        git merge --no-commit \"$BRANCH_TO_MERGE\"; \
-        git reset; \
-    }; f"
-#+end_src
-
-#+begin_src conf
-    ##? Usage: git dry-merge2 BRANCH_TO_MERGE
-    ##?
-    ##? Simulate a "dry run" merge of a branch into the current branch.
-    ##?
-    ##? Example:
-    ##?   git dry-merge2 feature # Merge the `feature` branch without committing the changes.
-    dry-merge2 = "!f() { \
-        if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git dry-merge2 BRANCH_TO_MERGE\n'; \
-            return 64; \
-        fi; \
-        BRANCH_TO_MERGE=\"$1\"; \
-        git merge --no-commit --no-ff \"$BRANCH_TO_MERGE\"; \
     }; f"
 #+end_src
 
