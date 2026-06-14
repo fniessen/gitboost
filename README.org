@@ -5749,14 +5749,13 @@ also be a commit that was merged.
     common-ancestor = "!f() { \
         MAIN_BRANCH=${1:-$(git main-branch)}; \
         CURRENT_BRANCH=${2:-$(git rev-parse --abbrev-ref HEAD)}; \
-        base=$(git merge-base $MAIN_BRANCH $CURRENT_BRANCH 2> /dev/null); \
+        base=$(git merge-base \"$MAIN_BRANCH\" \"$CURRENT_BRANCH\" 2>/dev/null); \
         if [ -z \"$base\" ]; then \
             printf >&2 '%s\n' \"ERROR: Unable to find common ancestor between branches '$MAIN_BRANCH' and '$CURRENT_BRANCH'. Branches may not exist or be valid.\"; \
             return 2; \
-        else \
-            short_base=$(git rev-parse --short $base); \
-            printf '%s\n' \"$short_base\"; \
-        fi \
+        fi; \
+        short_base=$(git rev-parse --short \"$base\"); \
+        printf '%s\n' \"$short_base\"; \
     }; f"
     # Find the point at which a branch forked from another branch (when it was
     # branched off).
