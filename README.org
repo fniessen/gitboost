@@ -2802,7 +2802,7 @@ List commits *showing changed files* (prettier and more concise version of
     lastn3 = "!f() { \
         n=${1:-1}; \
         for c in $(git rev-list -n $n HEAD); do \
-            if git rev-parse --verify \"$c^2\" >/dev/null 2>&1; then \
+            if git rev-parse --verify \"$c^2\" > /dev/null 2>&1; then \
                 echo \"$(tput bold)$(tput setaf 3)Merge commit $c$(tput sgr0) -- changes from merged branch:\"; \
                 git show --name-status --stat -M \"$c^2\"..\"$c\"; \
             else \
@@ -5749,7 +5749,7 @@ also be a commit that was merged.
     common-ancestor = "!f() { \
         MAIN_BRANCH=${1:-$(git main-branch)}; \
         CURRENT_BRANCH=${2:-$(git rev-parse --abbrev-ref HEAD)}; \
-        base=$(git merge-base \"$MAIN_BRANCH\" \"$CURRENT_BRANCH\" 2>/dev/null); \
+        base=$(git merge-base \"$MAIN_BRANCH\" \"$CURRENT_BRANCH\" 2> /dev/null); \
         if [ -z \"$base\" ]; then \
             printf >&2 '%s\n' \"ERROR: Unable to find common ancestor between branches '$MAIN_BRANCH' and '$CURRENT_BRANCH'. Branches may not exist or be valid.\"; \
             return 2; \
@@ -7246,25 +7246,29 @@ examine, test, and undo the merge if required.
 
 You can do ~git merge --abort~ after seeing that there are conflicts.
 
-Run ~merge-test~ (before ~merge~) to check for any conflicts beforehand.
+Run ~merge-check~ (before ~merge~) to check for any conflicts beforehand.
 
 #+begin_src conf
-    ##? Usage: git merge-test BRANCH_NAME
+    ##? Usage: git merge-check BRANCH_NAME
     ##?
-    ##? Test a merge and then abort it.
-    merge-test = "!f() { \
+    ##? Check if a branch merges without conflicts; leaves no changes behind.
+    merge-check = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git merge-test BRANCH_NAME\n'; \
+            printf >&2 'Usage: git merge-check BRANCH_NAME\n'; \
             return 64; \
         fi; \
         BRANCH_NAME=\"$1\"; \
-        if [ -z \"$BRANCH_NAME\" ]; then \
-            printf >&2 \"ERROR: No branch specified.\\n\"; \
-            return 2; \
-        fi; \
         git merge --no-commit --no-ff \"$BRANCH_NAME\"; \
-        git merge --abort; \
-        printf \"Merge aborted.\\n\"; \
+        status=$?; \
+        if git rev-parse -q --verify MERGE_HEAD > /dev/null; then \
+            git merge --abort; \
+        fi; \
+        if [ $status -eq 0 ]; then \
+            printf 'Merge would work.\n'; \
+        else \
+            printf 'Merge has conflicts or failed.\n'; \
+        fi; \
+        return $status; \
     }; f"
 #+end_src
 

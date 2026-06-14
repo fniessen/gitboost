@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20260614.1852>
+# .gitconfig_gitboost, Time-stamp: <20260614.1906>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -2275,7 +2275,7 @@
     common-ancestor = "!f() { \
         MAIN_BRANCH=${1:-$(git main-branch)}; \
         CURRENT_BRANCH=${2:-$(git rev-parse --abbrev-ref HEAD)}; \
-        base=$(git merge-base \"$MAIN_BRANCH\" \"$CURRENT_BRANCH\" 2>/dev/null); \
+        base=$(git merge-base \"$MAIN_BRANCH\" \"$CURRENT_BRANCH\" 2> /dev/null); \
         if [ -z \"$base\" ]; then \
             printf >&2 '%s\n' \"ERROR: Unable to find common ancestor between branches '$MAIN_BRANCH' and '$CURRENT_BRANCH'. Branches may not exist or be valid.\"; \
             return 2; \
@@ -2876,22 +2876,26 @@
             && git checkout \"$current_branch\"; \
     }; f"
 
-    ##? Usage: git merge-test BRANCH_NAME
+    ##? Usage: git merge-check BRANCH_NAME
     ##?
-    ##? Test a merge and then abort it.
-    merge-test = "!f() { \
+    ##? Check if a branch merges without conflicts; leaves no changes behind.
+    merge-check = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git merge-test BRANCH_NAME\n'; \
+            printf >&2 'Usage: git merge-check BRANCH_NAME\n'; \
             return 64; \
         fi; \
         BRANCH_NAME=\"$1\"; \
-        if [ -z \"$BRANCH_NAME\" ]; then \
-            printf >&2 \"ERROR: No branch specified.\\n\"; \
-            return 2; \
-        fi; \
         git merge --no-commit --no-ff \"$BRANCH_NAME\"; \
-        git merge --abort; \
-        printf \"Merge aborted.\\n\"; \
+        status=$?; \
+        if git rev-parse -q --verify MERGE_HEAD > /dev/null; then \
+            git merge --abort; \
+        fi; \
+        if [ $status -eq 0 ]; then \
+            printf 'Merge would work.\n'; \
+        else \
+            printf 'Merge has conflicts or failed.\n'; \
+        fi; \
+        return $status; \
     }; f"
 
     ##? Usage: git dry-merge1 BRANCH_TO_MERGE
