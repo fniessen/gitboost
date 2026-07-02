@@ -1,4 +1,6 @@
-# Example ~/.colordiffrc for dark terminal backgrounds
+# -*- mode: conf; -*-
+
+# ~/.colordiffrc for dark terminal backgrounds
 
 # Don't display the colordiff banner.
 banner=no
