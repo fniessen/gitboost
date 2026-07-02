@@ -1,0 +1,29 @@
+# Example ~/.colordiffrc for dark terminal backgrounds
+
+# Don't display the colordiff banner.
+banner=no
+
+# Don't emit ANSI color codes when redirecting output to a file.
+color_patches=no
+
+# Available colors:
+#   white, yellow, green, blue, cyan, red, magenta, black
+#   darkwhite, darkyellow, darkgreen, darkblue,
+#   darkcyan, darkred, darkmagenta, darkblack
+#
+# Use 'off' (or 'none' / 'normal') to keep the terminal's default color.
+
+# Unchanged text.
+plain=off
+
+# Added lines.
+newtext=green
+
+# Removed lines.
+oldtext=red
+
+# Hunk headers (@@ ... @@), file names, etc.
+diffstuff=cyan
+
+# CVS-specific output.
+cvsstuff=yellow
