@@ -26,6 +26,3 @@ oldtext=red
 
 # Hunk headers (@@ ... @@), file names, etc.
 diffstuff=cyan
-
-# CVS-specific output.
-cvsstuff=yellow
