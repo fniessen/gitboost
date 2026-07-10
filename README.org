@@ -3082,7 +3082,7 @@ alias -g G3M=' --since=3.months.ago'
 alias -g G1Y=' --since=1.year.ago'
 
 # Global alias to exclude .git directories/files from grep results.
-alias -g NG="grep -v '\.git/'"          # "No Git".
+alias -g NG="| grep -v '\.git/'"        # "No Git".
 #+end_src
 
 You can use these aliases in Git commands to filter commits based on time, for
@@ -7286,25 +7286,18 @@ See if the merge is applicable to the current working tree and/or the index file
 and *detects conflicts*:
 
 #+begin_src conf
-    # Usage: git merge-dry-run BRANCH_NAME
+    # Usage: git merge-tree-conflicts BASE_BRANCH FEATURE_BRANCH
     #
-    # Check how the merge of BRANCH_NAME into master will go
-    merge-dry-run = "!f() { \
-        if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git merge-dry-run BRANCH_NAME\n'; \
+    # Show merge conflicts predicted by git merge-tree, without performing a merge.
+    merge-tree-conflicts = "!f() { \
+        if [ $# -ne 2 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
+            printf >&2 'Usage: git merge-tree-conflicts BASE_BRANCH FEATURE_BRANCH\n'; \
             return 64; \
         fi; \
-        if grep -q 'changed in both' <<< $(git merge-tree $(git merge-base FETCH_HEAD \"$1\") FETCH_HEAD \"$1\"); then \
-            printf 'Merge conflicts!\n' \
-        else \
-            printf 'This branch can be automatically merged.\n' \
-        fi; \
-    }; f"
-    # XXX DOESN'T work for git fetch & git merge
-
-    # Extract the "changed in both" lines as well as the conflicting parts.
-    merge-dry-run-conflicts = "!f() { \
-        git merge-tree $(git merge-base \"$1\" $2) \"$1\" $2 \
+        BASE_BRANCH=\"$1\"; \
+        FEATURE_BRANCH=\"$2\"; \
+        MERGE_BASE=$(git merge-base \"$BASE_BRANCH\" \"$FEATURE_BRANCH\"); \
+        git merge-tree \"$MERGE_BASE\" \"$BASE_BRANCH\" \"$FEATURE_BRANCH\" \
             | sed -n '/+<<<<<<< .our/,/+>>>>>>> .their/p;/^changed in both/{n;N;N;s/^/#/mg;p}' \
             | cdiff; \
     }; f"
