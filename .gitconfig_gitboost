@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20260731.1036>
+# .gitconfig_gitboost, Time-stamp: <20260731.1340>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -728,8 +728,12 @@
 
     ##? Usage: git clean-all-dry-run
     ##?
-    ##? Show what would be deleted by git clean-all.
+    ##? Preview untracked and ignored files that a full clean (git clean-all)
+    ##? would remove.
     clean-all-dry-run = clean --dry-run -d -x
+
+    # Alias for 'clean-all-dry-run'.
+    clean-all-preview = clean-all-dry-run
 
     ##? Usage: git stash-all
     ##?
@@ -1258,6 +1262,9 @@
         COMMIT=\"$1\"; \
         git branch --all --sort=-committerdate --contains \"$COMMIT\"; \
     }; f"
+
+    # Alias for 'branches-containing'.
+    who-has = branches-containing
 
     ##? Usage: git tags-containing COMMIT
     ##?
@@ -2197,36 +2204,40 @@
         git push \"$(git origin)\" --delete \"$TAG\"; \
     }; f"
 
-    ##? Usage: git compare-commits FROM TO
+    ##? Usage: git ahead-of BRANCH
     ##?
-    ##? Show commits between two branches or commits.
-    ##?
-    ##? Example:
-    ##?   git compare-commits branch1 branch2
-    compare-commits = "!f() { \
-        if [ $# -ne 2 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git compare-commits FROM TO\n'; \
+    ##? Show commits on HEAD that are not reachable from BRANCH.
+    ahead-of = "!f() { \
+        if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
+            printf >&2 'Usage: git ahead-of BRANCH\n'; \
             return 64; \
         fi; \
-        FROM=\"$1\"; \
-        TO=\"$2\"; \
-        git log \"$FROM\"...\"$TO\"; \
+        BRANCH=\"$1\"; \
+        git log --decorate \"$BRANCH\"..HEAD; \
     }; f"
 
-    ##? Usage: git compare-changed-files FROM TO
+    ##? Usage: git behind BRANCH
     ##?
-    ##? Show changed files between two branches or commits.
-    ##?
-    ##? Example:
-    ##?   git compare-changed-files branch1 branch2
-    compare-changed-files = "!f() { \
-        if [ $# -ne 2 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git compare-changed-files FROM TO\n'; \
+    ##? Show commits on BRANCH that are not reachable from HEAD.
+    behind = "!f() { \
+        if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
+            printf >&2 'Usage: git behind BRANCH\n'; \
             return 64; \
         fi; \
-        FROM=\"$1\"; \
-        TO=\"$2\"; \
-        git diff --stat \"$FROM\"...\"$TO\"; \
+        BRANCH=\"$1\"; \
+        git log --decorate HEAD..\"$BRANCH\"; \
+    }; f"
+
+    ##? Usage: git changed-files-since BRANCH
+    ##?
+    ##? Show changed files on HEAD since it diverged from BRANCH.
+    changed-files-since = "!f() { \
+        if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
+            printf >&2 'Usage: git changed-files-since BRANCH\n'; \
+            return 64; \
+        fi; \
+        BRANCH=\"$1\"; \
+        git diff --stat \"$BRANCH\"...HEAD; \
     }; f"
 
     ##? Usage: git compare FROM TO
@@ -2263,23 +2274,15 @@
             printf >&2 'Usage: git missing [OTHER_BRANCH]\n'; \
             return 64; \
         fi; \
-        current_branch=$(git current-branch); \
+        current_branch=HEAD; \
         OTHER_BRANCH=${1:-$(git main-branch)}; \
-        if ! git verify-local-branch \"$current_branch\"; then \
-            printf >&2 \"$(tput setaf 1)ERROR: Current branch '%s' is not a valid branch.\n$(tput sgr0)\" \"$current_branch\"; \
-            return 2; \
-        fi; \
-        if ! git verify-local-branch \"$OTHER_BRANCH\"; then \
-            printf >&2 \"$(tput setaf 1)ERROR: Other branch '%s' is not a valid branch.\n$(tput sgr0)\" \"$OTHER_BRANCH\"; \
-            return 2; \
-        fi; \
         commits_missing_to_current=$(git rev-list --count \"$OTHER_BRANCH\"..\"$current_branch\"); \
         commits_missing_to_other=$(git rev-list --count \"$current_branch\"..\"$OTHER_BRANCH\"); \
-        printf \"$(tput bold)$(tput setaf 2)Commits missing in '%s' but present in '%s':$(tput sgr0) %d commits\n\" \
-            \"$OTHER_BRANCH\" \"$current_branch\" \"$commits_missing_to_current\"; \
+        printf \"$(tput bold)$(tput setaf 2)You have %d extra commits:\n\" \
+            \"$commits_missing_to_current\"; \
         git --no-pager log \"$OTHER_BRANCH\"..\"$current_branch\"; \
-        printf \"\n\n$(tput bold)$(tput setaf 3)Commits missing in '%s' but present in '%s':$(tput sgr0) %d commits\n\" \
-            \"$current_branch\" \"$OTHER_BRANCH\" \"$commits_missing_to_other\"; \
+        printf \"\n\n$(tput bold)$(tput setaf 3)You are missing %d commits:\n\" \
+            \"$commits_missing_to_other\"; \
         git --no-pager log \"$current_branch\"..\"$OTHER_BRANCH\"; \
         printf \"\n\"; \
     }; f"
@@ -2315,7 +2318,7 @@
     #   git missing-files             list changed files between this and main
     #   git missing-files feature/7   list changed files between this and the 'feature/7' branch
     missing-files = "!f() { \
-        current_branch=$(git current-branch); \
+        current_branch=HEAD; \
         OTHER_BRANCH=${1:-$(git main-branch)}; \
         if ! git verify-local-branch \"$current_branch\"; then \
             printf >&2 \"ERROR: Current branch '%s' is not a valid branch.\n\" \"$current_branch\"; \
@@ -2331,7 +2334,7 @@
     }; f"
 
     missing-files-name-only = "!f() { \
-        current_branch=$(git current-branch); \
+        current_branch=HEAD; \
         OTHER_BRANCH=${1:-$(git main-branch)}; \
         if ! git verify-local-branch \"$current_branch\"; then \
             printf >&2 \"ERROR: Current branch '%s' is not a valid branch.\n\" \"$current_branch\"; \
@@ -2348,13 +2351,13 @@
     ##?
     ##? Show the commit history as a graph for the current revision set.
     ##? Decorations (branches and tags) are shown according to Git configuration.
-    lg = log --graph
+    lg = log --graph --decorate
 
     ##? Usage: git lg-all-branches
     ##?
     ##? Show the commit history graph for all local branches, remote-tracking
     ##? branches, and tags.
-    lg-all-branches = log --all --graph
+    lg-all-branches = log --all --graph --decorate
 
     ##? Usage: git lg-changes
     ##?
@@ -2984,9 +2987,9 @@
     co = checkout
 
     ##? Checkout the latest commit on the current branch that is not (merged) on
-    ##? 'master'.
+    ##? 'main'.
     next = "!f() { \
-        git checkout $(git rev-list --topo-order HEAD..master | tail -1); \
+        git checkout $(git rev-list --topo-order HEAD..main | tail -1); \
     }; f"
 
     ##? Usage: git force-checkout BRANCH_NAME
