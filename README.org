@@ -1340,8 +1340,10 @@ Fetch URL: git@bitbucket.org-something:user/slug
 #+end_src
 
 #+begin_tip
-*Avoid swallowing failures* from ~git root~ by *returning* immediately if the
-repository root cannot be determined.
+*Why ~|| return~?*
+
+The command intentionally *propagates failures*, causing the alias to return
+immediately with a non-zero status (return code propagation).
 #+end_tip
 
 Updating Git aliases for different *main branch* names (~main~, ~master~, etc.):
