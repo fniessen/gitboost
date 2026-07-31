@@ -480,6 +480,38 @@ something with UTF-8 in it.
 See https://github.com/so-fancy/diff-so-fancy/issues/364.
 #+end_tip
 
+*** Show inline word differences
+
+Use ~--word-diff=plain~ to mark additions and deletions with explicit delimiters
+(~{+...+}~ and ~[-...-]~).
+
+For example:
+
+#+begin_src shell :tangle no
+git diff --no-index \
+    --word-diff=plain \
+    --word-diff-regex='[^,]+' \
+    <(head -n 6 "$CSV1" | sed 's/,/, /g') \
+    <(head -n 6 "$CSV2" | sed 's/,/, /g')
+#+end_src
+
+*** Compare files with 'wdiff'
+
+~wdiff~ is another tool for displaying word-level differences. Here, ANSI escape
+sequences are used to color deletions in red and additions in green.
+
+For example:
+
+#+begin_src shell :tangle no
+wdiff \
+    -w $'\e[31m' \
+    -x $'\e[0m' \
+    -y $'\e[32m' \
+    -z $'\e[0m' \
+    <(head -n 6 "$CSV1" | sed 's/,/, /g') \
+    <(head -n 6 "$CSV2" | sed 's/,/, /g')
+#+end_src
+
 ** AutoCRLF
 
 [[https://help.github.com/en/github/using-git/configuring-git-to-handle-line-endings][GitHub suggests]] that you should make sure to only use LF (~\n~) as a newline
@@ -3115,7 +3147,8 @@ List all the changed files *in a commit* (also in a /merge commit/):
 
 ** Get the diff of a commit
 
-Show changes with word-level granularity and color highlighting.
+Display the changes introduced by a commit with word-level or character-level
+highlighting.
 
 #+begin_src conf
     # Show commit with word-wise diff.
