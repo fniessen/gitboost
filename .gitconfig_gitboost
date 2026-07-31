@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20260731.1424>
+# .gitconfig_gitboost, Time-stamp: <20260731.1438>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -2214,8 +2214,12 @@
         fi; \
         BRANCH=\"$1\"; \
         COUNT=$(git rev-list --count \"$BRANCH\"..HEAD) || return; \
-        printf 'You have %d extra commits:\n' \"$COUNT\"; \
-        git log --decorate \"$BRANCH\"..HEAD; \
+        printf 'You have %d extra commit%s compared to %s:\n' \
+            \"$COUNT\" \
+            \"$( [ \"$COUNT\" -eq 1 ] || printf s )\" \
+            \"$BRANCH\" >/dev/stderr; \
+        git --no-pager log --decorate \"$BRANCH\"..HEAD; \
+        printf '\n'; \
     }; f"
 
     ##? Usage: git behind BRANCH
@@ -2228,8 +2232,12 @@
         fi; \
         BRANCH=\"$1\"; \
         COUNT=$(git rev-list --count HEAD..\"$BRANCH\") || return; \
-        printf 'You are missing %d commits:\n' \"$COUNT\"; \
-        git log --decorate HEAD..\"$BRANCH\"; \
+        printf 'You are missing %d commit%s from %s:\n' \
+            \"$COUNT\" \
+            \"$( [ \"$COUNT\" -eq 1 ] || printf s )\" \
+            \"$BRANCH\" >/dev/stderr; \
+        git --no-pager log --decorate HEAD..\"$BRANCH\"; \
+        printf '\n'; \
     }; f"
 
     ##? Usage: git changed-files-since BRANCH
