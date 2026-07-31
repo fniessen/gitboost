@@ -5297,21 +5297,25 @@ Delete a *remote* branch:
     }; f"
 #+end_src
 
-*** Delete all orphaned branches (those that no longer exist remotely)
+*** Remove orphaned branches (those that no longer exist remotely)
 
-Once you delete a branch from the remote repository, you can *prune
-remote-tracking branches that no longer exist on the remote* using:
+When a branch is deleted from a remote repository, Git keeps the corresponding
+*remote-tracking branch* until it is pruned.
+
+Prune remote-tracking branches that no longer exist on the default remote:
 
 : git remote prune $(git origin)
 
-Use the ~--dry-run~ flag to preview which branches will be pruned without actually
-pruning them:
+Use ~--dry-run~ to preview which branches would be removed:
 
 : git remote prune $(git origin) --dry-run
 
+To prune *all* remotes:
+
 #+begin_src conf
-    # Usage: git prune-branches-all-remotes
-    # Prune all branches for all remotes.
+    ##? Usage: git prune-branches-all-remotes
+    ##?
+    ##? Prune remote-tracking branches for all configured remotes.
     prune-branches-all-remotes = "!f() { \
         git remote | xargs -n 1 git remote prune; \
     }; f"
@@ -5319,31 +5323,52 @@ pruning them:
 #+end_src
 
 #+begin_tip
-If you want this to be executed automatically every time you fetch/pull:
+To prune remote-tracking branches automatically whenever you fetch or pull:
 
 : git config --global fetch.prune true
 #+end_tip
 
-However, note that this command *does not remove local branches* that are already
-checked out or that you've created locally.
+Pruning *only removes remote-tracking branches*. It does *not* delete your local
+branches, even if their upstream branch has been removed.
 
-*Remove orphaned branches in your local repository* that *no longer exist remotely*
-(by deleting any local branches that are marked as "gone"):
+To delete *local branches* whose configured upstream branch is marked as
+~[gone]~:
 
 #+begin_src conf
     ##? Usage: git delete-gone-local-branches
     ##?
-    ##? Delete local branches that are tracking remote branches that are gone.
+    ##? Delete local branches whose configured upstream branch is gone.
+    ##? Skip the currently checked-out branch.
     delete-gone-local-branches = "!f() { \
-        gone_branches=$(git branch -vv | awk '/: gone]/{print $1}'); \
+        current_branch=$(git branch --show-current); \
+        gone_branches=$( \
+            git for-each-ref \
+                --format='%(refname:short) %(upstream:track)' \
+                refs/heads \
+            | awk -v current=\"$current_branch\" \
+                '$NF == \"[gone]\" { \
+                    sub(/ \\[gone\\]$/, \"\"); \
+                    if ($0 != current) print \
+                }' \
+        ); \
         if [ -n \"$gone_branches\" ]; then \
-            printf \"Deleting gone branches:\n\"; \
-            printf \"%s\n\" \"$gone_branches\" | xargs -n 1 git delete-local-branch; \
+            printf '%s\n' 'Deleting gone branches:'; \
+            printf '%s\n' \"$gone_branches\"; \
+            printf '%s\n' \"$gone_branches\" \
+                | while IFS= read -r branch; do \
+                    git delete-local-branch \"$branch\"; \
+                done; \
         else \
-            printf \"No gone branches to delete.\n\"; \
-        fi \
+            printf '%s\n' 'No gone branches to delete.'; \
+        fi; \
     }; f"
 #+end_src
+
+The cleanup is therefore a two-step process:
+
+1. Prune remote-tracking branches (~git remote prune~ or ~fetch.prune=true~).
+2. Delete local branches whose upstream is now reported as =[gone]=
+   (~git delete-gone-local-branches~).
 
 ** Rename a branch
 

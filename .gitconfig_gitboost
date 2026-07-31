@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20260731.1017>
+# .gitconfig_gitboost, Time-stamp: <20260731.1036>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -2080,8 +2080,9 @@
             && git delete-remote-branch \"$BRANCH_NAME\"; \
     }; f"
 
-    # Usage: git prune-branches-all-remotes
-    # Prune all branches for all remotes.
+    ##? Usage: git prune-branches-all-remotes
+    ##?
+    ##? Prune remote-tracking branches for all configured remotes.
     prune-branches-all-remotes = "!f() { \
         git remote | xargs -n 1 git remote prune; \
     }; f"
@@ -2089,15 +2090,30 @@
 
     ##? Usage: git delete-gone-local-branches
     ##?
-    ##? Delete local branches that are tracking remote branches that are gone.
+    ##? Delete local branches whose configured upstream branch is gone.
+    ##? Skip the currently checked-out branch.
     delete-gone-local-branches = "!f() { \
-        gone_branches=$(git branch -vv | awk '/: gone]/{print $1}'); \
+        current_branch=$(git branch --show-current); \
+        gone_branches=$( \
+            git for-each-ref \
+                --format='%(refname:short) %(upstream:track)' \
+                refs/heads \
+            | awk -v current=\"$current_branch\" \
+                '$NF == \"[gone]\" { \
+                    sub(/ \\[gone\\]$/, \"\"); \
+                    if ($0 != current) print \
+                }' \
+        ); \
         if [ -n \"$gone_branches\" ]; then \
-            printf \"Deleting gone branches:\n\"; \
-            printf \"%s\n\" \"$gone_branches\" | xargs -n 1 git delete-local-branch; \
+            printf '%s\n' 'Deleting gone branches:'; \
+            printf '%s\n' \"$gone_branches\"; \
+            printf '%s\n' \"$gone_branches\" \
+                | while IFS= read -r branch; do \
+                    git delete-local-branch \"$branch\"; \
+                done; \
         else \
-            printf \"No gone branches to delete.\n\"; \
-        fi \
+            printf '%s\n' 'No gone branches to delete.'; \
+        fi; \
     }; f"
 
     # Usage: git rename-local-branch [OLD_BRANCH_NAME] NEW_BRANCH_NAME
