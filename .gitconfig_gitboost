@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20260731.1340>
+# .gitconfig_gitboost, Time-stamp: <20260731.1424>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -2213,6 +2213,8 @@
             return 64; \
         fi; \
         BRANCH=\"$1\"; \
+        COUNT=$(git rev-list --count \"$BRANCH\"..HEAD) || return; \
+        printf 'You have %d extra commits:\n' \"$COUNT\"; \
         git log --decorate \"$BRANCH\"..HEAD; \
     }; f"
 
@@ -2225,6 +2227,8 @@
             return 64; \
         fi; \
         BRANCH=\"$1\"; \
+        COUNT=$(git rev-list --count HEAD..\"$BRANCH\") || return; \
+        printf 'You are missing %d commits:\n' \"$COUNT\"; \
         git log --decorate HEAD..\"$BRANCH\"; \
     }; f"
 
@@ -2267,24 +2271,22 @@
         git difftool $(git main-branch)..$(git rev-parse --abbrev-ref HEAD) -- \"$1\"; \
     }; f"
 
-    # Usage: git missing [OTHER_BRANCH]
-    # Show the missing commits between the current branch and another branch.
+    ##? Usage: git missing [BRANCH]
+    ##?
+    ##? Show commits that differ between HEAD and BRANCH.
     missing = "!f() { \
-        if [ $# -gt 1 ]; then \
-            printf >&2 'Usage: git missing [OTHER_BRANCH]\n'; \
+        if [ $# -gt 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
+            printf >&2 'Usage: git missing [BRANCH]\n'; \
             return 64; \
         fi; \
-        current_branch=HEAD; \
-        OTHER_BRANCH=${1:-$(git main-branch)}; \
-        commits_missing_to_current=$(git rev-list --count \"$OTHER_BRANCH\"..\"$current_branch\"); \
-        commits_missing_to_other=$(git rev-list --count \"$current_branch\"..\"$OTHER_BRANCH\"); \
-        printf \"$(tput bold)$(tput setaf 2)You have %d extra commits:\n\" \
-            \"$commits_missing_to_current\"; \
-        git --no-pager log \"$OTHER_BRANCH\"..\"$current_branch\"; \
-        printf \"\n\n$(tput bold)$(tput setaf 3)You are missing %d commits:\n\" \
-            \"$commits_missing_to_other\"; \
-        git --no-pager log \"$current_branch\"..\"$OTHER_BRANCH\"; \
-        printf \"\n\"; \
+        if [ $# -eq 1 ]; then \
+            BRANCH=\"$1\"; \
+        else \
+            BRANCH=$(git upstream-branch) || return; \
+        fi; \
+        git ahead-of \"$BRANCH\"; \
+        printf '\n'; \
+        git behind \"$BRANCH\"; \
     }; f"
 
     ##? Get the merge base commit hash between two branches. Defaults to main

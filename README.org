@@ -5653,6 +5653,8 @@ from ~HEAD~ but not from the specified branch. It answers the common question:
             return 64; \
         fi; \
         BRANCH=\"$1\"; \
+        COUNT=$(git rev-list --count \"$BRANCH\"..HEAD) || return; \
+        printf 'You have %d extra commits:\n' \"$COUNT\"; \
         git log --decorate \"$BRANCH\"..HEAD; \
     }; f"
 #+end_src
@@ -5669,6 +5671,8 @@ Complementary alias:
             return 64; \
         fi; \
         BRANCH=\"$1\"; \
+        COUNT=$(git rev-list --count HEAD..\"$BRANCH\") || return; \
+        printf 'You are missing %d commits:\n' \"$COUNT\"; \
         git log --decorate HEAD..\"$BRANCH\"; \
     }; f"
 #+end_src
@@ -5750,42 +5754,60 @@ If either side is ~HEAD~, it may be omitted (e.g. ~master..~ compares ~master~ t
 
 *** Show unmerged commits between two branches
 
-The alias ~missing~ (an idea borrowed from Bazaar) shows the unique commits in the
-current branch and the specified branch.
+The ~missing~ alias (inspired by Bazaar) displays the commits that are unique to
+the current branch and the target branch, making it easy to see what has not yet
+been merged.
 
 #+begin_src conf
-    # Usage: git missing [OTHER_BRANCH]
-    # Show the missing commits between the current branch and another branch.
+    ##? Usage: git missing [BRANCH]
+    ##?
+    ##? Show commits that differ between HEAD and BRANCH.
     missing = "!f() { \
-        if [ $# -gt 1 ]; then \
-            printf >&2 'Usage: git missing [OTHER_BRANCH]\n'; \
+        if [ $# -gt 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
+            printf >&2 'Usage: git missing [BRANCH]\n'; \
             return 64; \
         fi; \
-        current_branch=HEAD; \
-        OTHER_BRANCH=${1:-$(git main-branch)}; \
-        commits_missing_to_current=$(git rev-list --count \"$OTHER_BRANCH\"..\"$current_branch\"); \
-        commits_missing_to_other=$(git rev-list --count \"$current_branch\"..\"$OTHER_BRANCH\"); \
-        printf \"$(tput bold)$(tput setaf 2)You have %d extra commits:\n\" \
-            \"$commits_missing_to_current\"; \
-        git --no-pager log \"$OTHER_BRANCH\"..\"$current_branch\"; \
-        printf \"\n\n$(tput bold)$(tput setaf 3)You are missing %d commits:\n\" \
-            \"$commits_missing_to_other\"; \
-        git --no-pager log \"$current_branch\"..\"$OTHER_BRANCH\"; \
-        printf \"\n\"; \
+        if [ $# -eq 1 ]; then \
+            BRANCH=\"$1\"; \
+        else \
+            BRANCH=$(git upstream-branch) || return; \
+        fi; \
+        git ahead-of \"$BRANCH\"; \
+        printf '\n'; \
+        git behind \"$BRANCH\"; \
     }; f"
 #+end_src
 
-*How to find all the commits made only on a specific branch?*  Assuming that your
-branch was created off of ~master~, then /while on the specific branch/ (that is,
-you have that branch checked out):
+*Examples*
+
+To compare the current branch with its upstream branch:
+
+: git missing
+
+To compare the current branch with a specific branch:
+
+: git missing main
+
+The output consists of two sections:
+
+- *Ahead of*: commits that exist only on the current branch.
+- *Behind*: commits that exist only on the target branch.
+
+*** Alternative Git commands
+
+If you only want to list commits that exist on your current branch but not on
+~main~, Git provides several built-in alternatives.
+
+Assuming your branch was created from ~main~ and is currently checked out:
 
 : git missing $(git ancestor)
 : git log --no-merges master..
 : git log HEAD --not master
 : git cherry -v master
 
-to show commits (that you've done since you forked) that haven't made it to
-~master~ yet.
+These commands list commits that have not yet been merged into ~main~. The
+~git missing~ alias provides a more complete view by showing both commits unique
+to the current branch and commits unique to the comparison branch.
 
 #+begin_example
 + 497034f2 Listener.new now accepts a hash of options
@@ -5795,7 +5817,7 @@ to show commits (that you've done since you forked) that haven't made it to
 
 The ~cherry~ command is useful to see which commits have been cherry-picked from
 a development branch to the stable branch, for instance. This command compares
-changes on the current (=feature=) branch to upstream (=master=) and indicates which
+changes on the current (=feature=) branch to upstream (=main=) and indicates which
 are present on both with the ~-~ sign. Changes still missing from upstream are
 marked with ~+~.
 
