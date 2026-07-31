@@ -1339,6 +1339,11 @@ Fetch URL: git@bitbucket.org-something:user/slug
     }; f"
 #+end_src
 
+#+begin_tip
+*Avoid swallowing failures* from ~git root~ by *returning* immediately if the
+repository root cannot be determined.
+#+end_tip
+
 Updating Git aliases for different *main branch* names (~main~, ~master~, etc.):
 
 XXX default-branch???
