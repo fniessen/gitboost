@@ -1334,8 +1334,8 @@ Fetch URL: git@bitbucket.org-something:user/slug
     ##?
     ##? Get the repository slug from the local directory name.
     repo-slug-local = "!f() { \
-        repo_name=$(basename \"$(git root)\"); \
-        printf \"%s\n\" \"$repo_name\"; \
+        git_root=$(git root) || return; \
+        basename \"$git_root\"; \
     }; f"
 #+end_src
 
@@ -6947,11 +6947,13 @@ Run ~git show~ command in a temporary ~HOME~ directory set to ~/dev/null~.
             printf >&2 'Usage: git all-repos COMMAND [ARGS]\\n'; \
             return 64; \
         fi; \
-        find . -type d -name '.git' \
+        find . -type d -name '.git' -prune 2>/dev/null \
             | sort \
-            | sed 's_/.git__' \
+            | sed 's_/.git$__' \
             | while read -r repo_path; do \
-                repo_slug_local=$(git -C \"$repo_path\" repo-slug-local); \
+                if ! repo_slug_local=$(git -C \"$repo_path\" repo-slug-local 2>/dev/null); then \
+                    repo_slug_local=\"$repo_path\"; \
+                fi; \
                 printf '\\033[1m%s:\\033[0m\\n' \"$repo_slug_local\"; \
                 output=$(git -C \"$repo_path\" -c color.status=always \"$@\" 2>&1); \
                 if [ -n \"$output\" ]; then \
