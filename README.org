@@ -7,7 +7,7 @@
 #+LANGUAGE:  en
 #+OPTIONS:   H:4 num:nil toc:t
 
-#+SETUPFILE: ~/org/html-theme-readtheorg.setup
+#+SETUPFILE: ~/org/setup/html-theme-readtheorg.setup
 
 #+EXCLUDE_TAGS: noexport
 #+PROPERTY:  header-args :tangle .gitconfig_gitboost :eval no
@@ -1262,14 +1262,12 @@ Fetch URL: git@bitbucket.org-something:user/slug
 #+begin_src conf
     ##? Usage: git origin
     ##?
-    ##? Get the default remote name, defaulting to 'origin' if not set.
+    ##? Print the remote name of the current branch's upstream.
+    ##? Produces no output if the current branch has no upstream.
     origin = "!f() { \
-        default_remote_name=$(git config --get clone.defaultRemoteName); \
-        printf \"%s\n\" \"${default_remote_name:-origin}\"; \
+        git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null \
+            | cut -d/ -f1; \
     }; f"
-    ### git remote show
-    ### git rev-parse --abbrev-ref @{u}
-    ### git rev-parse --symbolic-full-name --abbrev-ref @{u} | sed 's!/! !g' | awk '{print $1}'
 #+end_src
 
 #+begin_src conf

@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20260710.0904>
+# .gitconfig_gitboost, Time-stamp: <20260731.1017>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -294,14 +294,12 @@
 
     ##? Usage: git origin
     ##?
-    ##? Get the default remote name, defaulting to 'origin' if not set.
+    ##? Print the remote name of the current branch's upstream.
+    ##? Produces no output if the current branch has no upstream.
     origin = "!f() { \
-        default_remote_name=$(git config --get clone.defaultRemoteName); \
-        printf \"%s\n\" \"${default_remote_name:-origin}\"; \
+        git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null \
+            | cut -d/ -f1; \
     }; f"
-    ### git remote show
-    ### git rev-parse --abbrev-ref @{u}
-    ### git rev-parse --symbolic-full-name --abbrev-ref @{u} | sed 's!/! !g' | awk '{print $1}'
 
     ##? Usage: git repo-owner
     ##?
