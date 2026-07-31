@@ -5,7 +5,7 @@
 #+KEYWORDS:
 #+LANGUAGE:  en
 
-#+SETUPFILE: ~/org/html-theme-readtheorg.setup
+#+SETUPFILE: ~/org/setup/html-theme-readtheorg.setup
 
 * About Git
 
@@ -57,17 +57,17 @@ In the famous "Pro Git":
 
 [...]
   Many Git developers have a workflow that embraces this approach, such
-  as having only code that is entirely stable in their `master' branch —
+  as having only code that is entirely stable in their `master' branch --
   possibly only code that has been or will be released. They have
   another parallel branch named develop or next that they work from or
-  use to test stability — it isn’t necessarily always stable, but
+  use to test stability -- it isn't necessarily always stable, but
   whenever it gets to a stable state, it can be merged into `master'.
 [...]
   You can keep doing this for several levels of stability. Some larger
   projects also have a `proposed' or `pu' (proposed updates) branch that
   has integrated branches that may not be ready to go into the `next' or
   `master' branch. The idea is that your branches are at various levels
-  of stability; when they reach a more stable level, they’re merged into
+  of stability; when they reach a more stable level, they're merged into
   the branch above them.
 
 ** Other
@@ -176,19 +176,6 @@ git checkout HEAD@{2}
 
 for instance.  No need to deal with pesky tar files.
 
-** Revert
-
-If I happened to see something is wrong with my Emacs or org-mode (I build both
-from vc heads.) I will first do git clean and build again.,
-
-#+begin_src sh
-git reset --hard
-git clean -xdf
-# (Remember both commands are DESTRUCTIVE in a sense)
-#+end_src
-
-So that I can make sure my built is clean up to certain degree.
-
 * Apply patch against specific commit
 
 Apply patch against current db51b8 commit in master.
@@ -257,48 +244,6 @@ Some caveats:
   * If you have any new files, you'll need to "git add ..."  them before
     the "commit -am" or stash above, otherwise they'll be left out (and
     also be left alone in the current working directory).
-
-  * If the build process isn't really solid (and even if it is), it may
-    sometimes be helpful to run a "make clean" before you switch
-    branches.  Alternately, you can use this command if you want to
-    *completely* clean your tree -- likely more thoroughly, and possibly
-    more quickly than via make:
-
-      $ git clean -fdx
-
-    But that deletes *everything* git doesn't know about, including
-    ignored files, so be sure that's what you want.  You can see what
-    it's going to do beforehand with the "-n" (--dry-run) option.
-
-Note too that no working directory (copy) is more special than any
-other, so if you have the disk space, you can always "cp -a" or rsync
-your working dir before you do something you're uncertain about, and
-move it back if things go horribly wrong (no one need ever know...unless
-it's a push).
-
-(Technically, if your working directory is clean, all you need is the
- .git subdir, but it's less complicated to save/restore the whole tree
- -- otherwise you may need a "get reset --hard HEAD" or similar
- afterward.)
-
-Some other comments that might or might not be useful...
-
-For what it's worth, I almost always work on a temporary branch.  It's
-trivial to migrate the changes back to master (or wherever), via merge,
-rebase, or cherry-pick, once I decide I'm ready to push.
-
-I find gitk (--all) to be tremendously helpful as a tool to see what's
-going on, and to see whether or not I did what I think I did, especially
-when stumbling around unfamiliar bits of git.  Or, if you can't (or
-don't want to) fire up a GUI, this may be useful:
-
-  $ git log --decorate --oneline --graph
-
-And as compared to "git status", if you want briefer status output,
-perhaps
-
-  $ git status -s
-  $ git status -s -uno
 
 Another item in the category of "knowing what's going on" -- the fancy
 git prompt component that Debian (at least) provides by default, i.e.:
@@ -388,123 +333,6 @@ log" and then have to scroll up some million lines...
 > not display this information?
 
 git log --source --all
-
-** O
-
-in GIT commits are not on a branch. All commits are arranged into
-DAG, and branch is just a pointer into the DAG. Any given commit is
-either reachable from given branch or not. It's that simple.
-
-Try:
-
-$ git log --oneline --decorate emacs24 ^master
-
-that will show all commits that are reachable from 'emacs24' but not
-reachable from 'master'.
-
-Look up SPECIFYING RANGES in
-
-$ man gitrevisions
-
-for other possibilities.
-
-Also try:
-
-$ git show-branch emacs24 master
-
-Just tried that; it's interesting!  Thanks.  Maybe there's some way I can
-persuade it to display the commit date and committer too.  Then I'll have
-all the essential information about commits together.
-
->> You just re-defined "on a branch", that's all.  A commit that's
->> reachable from a branch is on that branch.  It's that simple.
->
-> Right.  Asked another way, is there a way to do a git log where each
-> entry has the information from "git branch --contains <this>" for each
-> commit in the log?
-
---source, but that does not list _all_ ways to reach a commit but just
-the one with which the current log command reached it.
-
-   > Because in GIT commits are not on a branch. All commits are
-   > arranged into DAG, and branch is just a pointer into the DAG.
-   > Any given commit is either reachable from given branch or
-   > not. It's that simple.
-
-   I think you're just playing with words, here.  We all know what
-   a branch is,
-
-Terminology differs between VCS models.  For RCS and conceptual
-derivatives, a "branch" is a series of commits, and a commit can be
-viewed as "contained in" or "belonging to" a branch; in the DAG,
-"branch" includes both vertice and edge information.  For Git, a
-"branch" is a vertice label only (edge information lies in the
-"commit object").  Changing a label has no effect on the commit or
-the edge info, and you can have more than one label on a commit.
-
-> Terminology differs between VCS models.  For RCS and conceptual
-> derivatives, a "branch" is a series of commits, and a commit can be
-> viewed as "contained in" or "belonging to" a branch; in the DAG,
-> "branch" includes both vertice and edge information.  For Git, a
-> "branch" is a vertice label only (edge information lies in the
-> "commit object").
-
-This is a red herring.  You are confusing the concept of a "branch"
-with the Git implementation of branches.  The implementation is a
-label, but "branch" the concept is the set of commits reachable from
-the branch tip, in Git as in any other VCS.  Unlike what you wrote,
-the revision history is conceptually _always_ a DAG, even in RCS.
-
-   The implementation is a label, but "branch" the concept is
-   the set of commits reachable from the branch tip, in Git as
-   in any other VCS.
-
-Unfortunately, i get the impression from the few Git manpages
-i've really read thoroughly that the clean distinction between
-"branch" the concept and "branch" the user-facing specification
-for a DAG vertex is not very important.
-
-   Unlike what you wrote, the revision history is conceptually
-   _always_ a DAG, even in RCS.
-
-I'm sorry i gave that impression; at the conceptual level i
-agree that all these systems manipulate DAGs.  My point was to
-deconstruct (a bit) the different ways vertex/edge information
-can be divvied, mainly to suggest that over-attachment to one
-or another "branch" concept is a good place to apply awareness
-hacking.
-
-   > It "knows" it, sure, but if the way it knows it and the
-   > way you think it knows it differ, you will remain
-   > confused.
-
-   You are in fact saying that it is impossible for a Git
-   newbie to grasp the basic concepts and do any useful work
-   without a detailed understanding of the internals.
-
-That's a valid interpretation, i suppose, in which case...
-
-   I don't think it's true.
-
-i would agree.  However, it's not the only one.  Generally, i
-think even the newest of newbies benefits from separating the
-applicable from the inapplicable baggage carried into any new
-effort.
-
-Here, as elaborated (and nicely compared to Emacs) by dak,
-there is also the opportunity (or needless pain, YMMV) for
-users to touch some fundamental data structures and algorithms,
-or at least to enjoy (or suffer) their touchings and teachings
-by some real experts.  That these experts could not maintain
-the putative distinction between "plumbing" and "porcelain" is
-perhaps less a failing on their part and more indicative of the
-strength of the underlying data model.
-
-Anyway, i don't argue that the word "branch" is well suited for
-the concept of "vertex label".  It is, by now, historical.
-Same logic is why we talk about CAR and CDR, half a century on.
-The only difference is that "branch" is a pre-existing word in
-VCS, CS, biology, etc.  Unfortunate choice, in hindsight.
 
 ** O
 
