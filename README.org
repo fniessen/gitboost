@@ -5779,6 +5779,7 @@ been merged.
             BRANCH=\"$1\"; \
         else \
             BRANCH=$(git upstream-branch) || return; \
+            git fetch --quiet || return; \
         fi; \
         git ahead-of \"$BRANCH\"; \
         printf '\n'; \

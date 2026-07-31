@@ -1,5 +1,5 @@
 # -*- mode: conf -*-
-# .gitconfig_gitboost, Time-stamp: <20260731.1438>
+# .gitconfig_gitboost, Time-stamp: <20260731.1510>
 
 [checkout]
     # Preserve timestamps of checked out files.
@@ -2291,6 +2291,7 @@
             BRANCH=\"$1\"; \
         else \
             BRANCH=$(git upstream-branch) || return; \
+            git fetch --quiet || return; \
         fi; \
         git ahead-of \"$BRANCH\"; \
         printf '\n'; \
