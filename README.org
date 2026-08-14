@@ -57,8 +57,8 @@ of ~git~ on the command line.
 
 #+begin_src shell :tangle bin/rc-common-settings-gitboost
 # Check if 'git' command is available.
-if ! command -v git > /dev/null 2>&1; then
-    printf >&2 "ERROR: 'git' is not installed. Please install it.\n"
+if ! command -v git >/dev/null 2>&1; then
+    printf "ERROR: 'git' is not installed. Please install it.\n" >&2
     return $EX_UNAVAILABLE
 fi
 
@@ -73,7 +73,7 @@ install it.
 
 #+begin_src shell :tangle bin/rc-common-settings-gitboost
 # Check if 'zip' command is available.
-if ! command -v zip > /dev/null 2>&1; then
+if ! command -v zip >/dev/null 2>&1; then
     printf "\033[1;33mWarning: 'zip' is not installed. Please install it.\033[0m\n"
 fi
 #+end_src
@@ -381,18 +381,18 @@ Supported editors include:
 [core]
     # editor = notepad++.exe -multiInst -notabbar -nosession -noPlugin
 
-    # editor = sh -c 'command -v $GIT_EDITOR > /dev/null 2>&1 && exec $GIT_EDITOR || echo "Please install $GIT_EDITOR or set another editor"'
+    # editor = sh -c 'command -v $GIT_EDITOR >/dev/null 2>&1 && exec $GIT_EDITOR || echo "Please install $GIT_EDITOR or set another editor"'
     # # (No editor name displayed!)
     # # Aborting commit due to empty commit message.
 
-    # editor = sh -c 'command -v emacsclient > /dev/null 2>&1 && echo emacsclient || echo "No suitable editor found. Please install Emacs."'
+    # editor = sh -c 'command -v emacsclient >/dev/null 2>&1 && echo emacsclient || echo "No suitable editor found. Please install Emacs."'
     # # emacsclient
     # # Aborting commit due to empty commit message.
 
-    # editor = sh -c 'for cmd in emacsclient emacs; do command -v $cmd > /dev/null 2>&1 && exec $cmd && echo "Using $cmd as the editor." && break; done; echo "No suitable editor found. Please install Emacs."'
+    # editor = sh -c 'for cmd in emacsclient emacs; do command -v $cmd >/dev/null 2>&1 && exec $cmd && echo "Using $cmd as the editor." && break; done; echo "No suitable editor found. Please install Emacs."'
     # # Syntax error: Unterminated quoted string
 
-    # editor = sh -c 'for cmd in emacsclient emacs; do command -v $cmd > /dev/null 2>&1 && exec $cmd && echo \"Using $cmd as the editor.\" && break; done; echo \"No suitable editor found. Please install Emacs.\"'
+    # editor = sh -c 'for cmd in emacsclient emacs; do command -v $cmd >/dev/null 2>&1 && exec $cmd && echo \"Using $cmd as the editor.\" && break; done; echo \"No suitable editor found. Please install Emacs.\"'
     # # Syntax error: Unterminated quoted string
 
     # Reuse a running Emacs server, or start Emacs if none is available.
@@ -453,7 +453,7 @@ Improve the ~git diff~ output using a tool like:
     # Set Git pager to use less with custom flags and diff-so-fancy.
     pager = "!sh -c '~/bin/git-pager'"
     pager = "!f() { \
-        if command -v diff-so-fancy > /dev/null 2>&1; then \
+        if command -v diff-so-fancy >/dev/null 2>&1; then \
             printf 'Using diff-so-fancy pager\n' && diff-so-fancy | LESS=less --tabs=4 -FRX \"$@\"; \
         else \
             printf 'Using default pager\n' && LESS=less --tabs=4 -FRX \"$@\"; \
@@ -491,8 +491,8 @@ For example:
 git diff --no-index \
     --word-diff=plain \
     --word-diff-regex='[^,]+' \
-    <(head -n 6 "$CSV1" | sed 's/,/, /g') \
-    <(head -n 6 "$CSV2" | sed 's/,/, /g')
+    <(head -n 6 "$CSV1" | sed 's_,_, _g') \
+    <(head -n 6 "$CSV2" | sed 's_,_, _g')
 #+end_src
 
 *** Compare files with 'wdiff'
@@ -508,8 +508,8 @@ wdiff \
     -x $'\e[0m' \
     -y $'\e[32m' \
     -z $'\e[0m' \
-    <(head -n 6 "$CSV1" | sed 's/,/, /g') \
-    <(head -n 6 "$CSV2" | sed 's/,/, /g')
+    <(head -n 6 "$CSV1" | sed 's_,_, _g') \
+    <(head -n 6 "$CSV2" | sed 's_,_, _g')
 #+end_src
 
 ** AutoCRLF
@@ -1007,7 +1007,7 @@ If you forget your aliases and don't want to open =.gitconfig= just to check, ty
     ##? List all Git aliases in alphabetical order and highlight the matching pattern.
     grep-aliases = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git grep-aliases PATTERN\n'; \
+            printf 'Usage: git grep-aliases PATTERN\n' >&2; \
             return 64; \
         fi; \
         PATTERN=\"$1\"; \
@@ -1024,18 +1024,18 @@ If you forget your aliases and don't want to open =.gitconfig= just to check, ty
     ##?   ALIAS_NAME                    The name of the custom Git alias.
     h = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git h ALIAS_NAME\n'; \
+            printf 'Usage: git h ALIAS_NAME\n' >&2; \
             return 64; \
         fi; \
         ALIAS_NAME=\"$1\"; \
         alias_description=\"$(git config alias.$ALIAS_NAME)\"; \
         if [ -z \"$alias_description\" ]; then \
-            printf >&2 'ERROR: Alias not found\n'; \
+            printf 'ERROR: Alias not found\n' >&2; \
             return 2; \
         fi; \
         alias_help=\"$(git config alias.$ALIAS_NAME | sed -n '/^##?/,/^$/p')\"; \
         if [ -z \"$alias_help\" ]; then \
-            printf >&2 'ERROR: No help found for the alias\n'; \
+            printf 'ERROR: No help found for the alias\n' >&2; \
             return 2; \
         fi; \
         printf \"$alias_help\"; \
@@ -1049,7 +1049,7 @@ If you forget your aliases and don't want to open =.gitconfig= just to check, ty
     #   ALIAS_NAME    The name of the custom Git alias.
     h = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git h ALIAS_NAME\n'; \
+            printf 'Usage: git h ALIAS_NAME\n' >&2; \
             return 64; \
         fi; \
         ALIAS_NAME=\"$1\"; \
@@ -1072,7 +1072,7 @@ If you forget your aliases and don't want to open =.gitconfig= just to check, ty
                 print comments; \
             }' \"$gitconfig_path\")\"; \
         if [ -z \"$alias_comments\" ]; then \
-            printf >&2 'ERROR: No comments found for the alias\n'; \
+            printf 'ERROR: No comments found for the alias\n' >&2; \
             return 2; \
         fi; \
         printf \"$alias_comments\"; \
@@ -1085,7 +1085,7 @@ If you forget your aliases and don't want to open =.gitconfig= just to check, ty
     #   ALIAS_NAME    The name of the custom Git alias.
     h = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git h ALIAS_NAME\n'; \
+            printf 'Usage: git h ALIAS_NAME\n' >&2; \
             return 64; \
         fi; \
         ALIAS_NAME=\"$1\"; \
@@ -1098,7 +1098,7 @@ If you forget your aliases and don't want to open =.gitconfig= just to check, ty
                 print $0; \
             }' \"$gitconfig_path\")\"; \
         if [ -z \"$alias_comments\" ]; then \
-            printf >&2 'ERROR: No comments found for the alias\n'; \
+            printf 'ERROR: No comments found for the alias\n' >&2; \
             return 2; \
         fi; \
         printf \"$alias_comments\"; \
@@ -1179,18 +1179,18 @@ Then, in the working copy:
     ##? Initialize a new Git repository with an initial commit.
     init-repository = "!f() { \
         git init || { \
-            printf >&2 'ERROR: git init failed. Aborting.\n'; \
+            printf 'ERROR: git init failed. Aborting.\n' >&2; \
             return 2; \
         }; \
         if [ -z \"$(ls -A . | grep -v '^\\.git$')\" ]; then \
             touch .gitignore; \
         fi; \
         git add . || { \
-            printf >&2 'ERROR: git add failed.\n'; \
+            printf 'ERROR: git add failed.\n' >&2; \
             return 2; \
         }; \
         git commit -m 'Initial commit' || { \
-            printf >&2 'ERROR: git commit failed.\n'; \
+            printf 'ERROR: git commit failed.\n' >&2; \
             return 2; \
         }; \
     }; f"
@@ -1371,7 +1371,7 @@ XXX default-branch???
 #+end_src
 
 Consider using
-: git symbolic-ref --short refs/remotes/$(git origin)/HEAD 2> /dev/null | sed 's|^refs/heads/||'
+: git symbolic-ref --short refs/remotes/$(git origin)/HEAD 2>/dev/null | sed 's_^refs/heads/__'
 ?
 
 *** Create a new repository in GitHub
@@ -1475,7 +1475,7 @@ Search files (by file path) in the current branch.
     ##?   PATTERN                       Pattern
     search-for-files = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git search-for-files PATTERN\n'; \
+            printf 'Usage: git search-for-files PATTERN\n' >&2; \
             return 64; \
         fi; \
         PATTERN=\"$1\"; \
@@ -1501,7 +1501,7 @@ Search files in all branches.
     ##?                                 all local branches.
     search-for-files-all-branches = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git search-for-files-all-branches PATTERN\n'; \
+            printf 'Usage: git search-for-files-all-branches PATTERN\n' >&2; \
             return 64; \
         fi; \
         PATTERN=\"$1\"; \
@@ -1522,7 +1522,7 @@ Search files in all branches.
 #+begin_src conf
     find-files-all-branches2 = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git find-files-all-branches2 PATTERN\n'; \
+            printf 'Usage: git find-files-all-branches2 PATTERN\n' >&2; \
             return 64; \
         fi; \
         for branch in $(git remote-branches | grep -v HEAD); do \
@@ -1591,7 +1591,7 @@ extension*.
     #   PATTERN                        The code pattern to search for.
     grep-local-branches-in-extension = "!f() { \
         if [ $# -ne 2 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git grep-local-branches-in-extension EXTENSION PATTERN\n'; \
+            printf 'Usage: git grep-local-branches-in-extension EXTENSION PATTERN\n' >&2; \
             return 64; \
         fi; \
         EXTENSION=\"$1\"; \
@@ -1700,7 +1700,7 @@ thrown away, the alias to use is ~unmodify~:
     ##?   git unmodify PATH/TO/FILE     Restore a specific modified file.
     unmodify = "!f() { \
         if [ $# -gt 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git unmodify [FILE_TO_RESTORE]\n'; \
+            printf 'Usage: git unmodify [FILE_TO_RESTORE]\n' >&2; \
             return 64; \
         fi; \
         FILE_TO_RESTORE=\"$1\"; \
@@ -1713,7 +1713,7 @@ thrown away, the alias to use is ~unmodify~:
             if git status --porcelain \"$FILE_TO_RESTORE\" | grep -qE '^ M'; then \
                 git checkout -- \"$FILE_TO_RESTORE\"; \
             else \
-                printf >&2 \"ERROR: File '%s' is not modified.\n\" \"$FILE_TO_RESTORE\"; \
+                printf \"ERROR: File '%s' is not modified.\n\" \"$FILE_TO_RESTORE\" >&2; \
                 return 2; \
             fi; \
         fi; \
@@ -1731,7 +1731,7 @@ thrown away, the alias to use is ~unmodify~:
     ##?   git undelete PATH/TO/FILE     Restore a specific deleted file.
     undelete = "!f() { \
         if [ $# -gt 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git undelete [FILE_TO_RESTORE]\n'; \
+            printf 'Usage: git undelete [FILE_TO_RESTORE]\n' >&2; \
             return 64; \
         fi; \
         FILE_TO_RESTORE=\"$1\"; \
@@ -1744,7 +1744,7 @@ thrown away, the alias to use is ~unmodify~:
             if git status --porcelain \"$FILE_TO_RESTORE\" | grep -qE '^ D'; then \
                 git checkout -- \"$FILE_TO_RESTORE\"; \
             else \
-                printf >&2 \"ERROR: File '%s' is not deleted.\n\" \"$FILE_TO_RESTORE\"; \
+                printf \"ERROR: File '%s' is not deleted.\n\" \"$FILE_TO_RESTORE\" >&2; \
                 return 2; \
             fi; \
         fi; \
@@ -1887,7 +1887,7 @@ Quickly add a file or directory to =.gitignore=:
     ignore = "!f() { \
         PATTERN=\"$1\"; \
         if [ -z \"$PATTERN\" ]; then \
-            printf >&2 'ERROR: No pattern provided.\\nUsage: git ignore PATTERN\\n'; \
+            printf 'ERROR: No pattern provided.\\nUsage: git ignore PATTERN\\n' >&2; \
             return 2; \
         fi; \
         if [ ! -e .gitignore ]; then \
@@ -2343,7 +2343,7 @@ user wants to have an updated repository.
             | grep commit \
             | cut -d' ' -f3 \
             | while read HASH; do \
-                  git rev-parse --verify --no-revs --quiet $HASH^2 2> /dev/null \
+                  git rev-parse --verify --no-revs --quiet $HASH^2 2>/dev/null \
                       && echo $HASH \
                       | xargs git rev-list --since=${1:-1day} -1; \
               done \
@@ -2750,7 +2750,7 @@ patch hunks* within specific files.
     # Interactively stage changes and commit, or abort.
     commit-interactive = "!f() { \
         if [ \"$(git root)\" != \"$(pwd)\" ]; then \
-            printf >&2 'ERROR: Not at the root of the Git repository.\n'; \
+            printf 'ERROR: Not at the root of the Git repository.\n' >&2; \
             return 2; \
         fi; \
         (git add -p -- \"$@\" && git commit) || git reset; \
@@ -2844,7 +2844,7 @@ List commits *showing changed files* (prettier and more concise version of
     lastn3 = "!f() { \
         n=${1:-1}; \
         for c in $(git rev-list -n $n HEAD); do \
-            if git rev-parse --verify \"$c^2\" > /dev/null 2>&1; then \
+            if git rev-parse --verify \"$c^2\" >/dev/null 2>&1; then \
                 echo \"$(tput bold)$(tput setaf 3)Merge commit $c$(tput sgr0) -- changes from merged branch:\"; \
                 git show --name-status --stat -M \"$c^2\"..\"$c\"; \
             else \
@@ -2866,14 +2866,14 @@ List commits *showing changed files* (prettier and more concise version of
     ##? Show the commit history of a specific file or directory.
     file-history = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git file-history FILE_PATH\n'; \
+            printf 'Usage: git file-history FILE_PATH\n' >&2; \
             return 64; \
         fi; \
         FILE_PATH=\"$1\"; \
-        if ! git ls-tree -r HEAD --name-only 2> /dev/null | grep -q \"^$FILE_PATH$\"; then \
+        if ! git ls-tree -r HEAD --name-only 2>/dev/null | grep -q \"^$FILE_PATH$\"; then \
             printf \"\\e[1;33mWarning: File '%s' not found in the current branch of the repository.\\e[0m\n\" \"$FILE_PATH\"; \
         fi; \
-        git log --follow -- \"$FILE_PATH\" 2> /dev/null; \
+        git log --follow -- \"$FILE_PATH\" 2>/dev/null; \
     }; f"
 #+end_src
 
@@ -2916,14 +2916,14 @@ branch:
     ##? Show the complete history of this file (or directory) across the whole repo.
     file-history-all-branches = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git file-history-all-branches FILE_PATH\n'; \
+            printf 'Usage: git file-history-all-branches FILE_PATH\n' >&2; \
             return 64; \
         fi; \
         FILE_PATH=\"$1\"; \
-        if ! git ls-tree -r HEAD --name-only 2> /dev/null | grep -q \"^$FILE_PATH$\"; then \
+        if ! git ls-tree -r HEAD --name-only 2>/dev/null | grep -q \"^$FILE_PATH$\"; then \
             printf \"\\e[1;33mWarning: File '%s' not found in the current branch of the repository.\\e[0m\n\" \"$FILE_PATH\"; \
         fi; \
-        git log --follow --all -- \"$FILE_PATH\" 2> /dev/null; \
+        git log --follow --all -- \"$FILE_PATH\" 2>/dev/null; \
     }; f"
 #+end_src
 
@@ -2950,7 +2950,7 @@ each commit:
     related-history = "!f() { \
         FILE_PATH=\"$1\"; \
         if [ ! -e \"$FILE_PATH\" ]; then \
-            printf >&2 \"ERROR: File '%s' not found in the working tree.\n\" \"$FILE_PATH\"; \
+            printf \"ERROR: File '%s' not found in the working tree.\n\" \"$FILE_PATH\" >&2; \
             return 2; \
         fi; \
         git show --name-only $(git rev-list HEAD -- \"$FILE_PATH\"); \
@@ -3002,12 +3002,12 @@ each commit:
     ##? Generate a list of which files changed together with a file.
     related-files = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git related-files FILE_PATH\n'; \
+            printf 'Usage: git related-files FILE_PATH\n' >&2; \
             return 64; \
         fi; \
         FILE_PATH=\"$1\"; \
         if [ ! -e \"$FILE_PATH\" ]; then \
-            printf >&2 \"ERROR: File '%s' not found in the working tree.\n\" \"$FILE_PATH\"; \
+            printf \"ERROR: File '%s' not found in the working tree.\n\" \"$FILE_PATH\" >&2; \
             return 2; \
         fi; \
         printf \"Unique Files:\n\"; \
@@ -3029,7 +3029,7 @@ known branches, use the following alias:
     ##? Show the last commit that modified the specified FILE_PATH.
     file-last-commit = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git file-last-commit FILE_PATH\n'; \
+            printf 'Usage: git file-last-commit FILE_PATH\n' >&2; \
             return 64; \
         fi; \
         FILE_PATH=\"$1\"; \
@@ -3061,7 +3061,7 @@ directory across all known branches:
     ##? this file, sorted by date.
     file-last-commit-all-branches = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git file-last-commit-all-branches FILE_PATH\n'; \
+            printf 'Usage: git file-last-commit-all-branches FILE_PATH\n' >&2; \
             return 64; \
         fi; \
         FILE_PATH=\"$1\"; \
@@ -3072,7 +3072,7 @@ directory across all known branches:
             esac; \
             printf \"$(git log --follow --decorate=no -1 \
                                --color=always \"$ref\" -- \"$FILE_PATH\") $(tput bold)$(tput setaf 2)$ref$(tput sgr0)\n\"; \
-        done | sort -r | sed 's#^[0-9]*:##g'; \
+        done | sort -r | sed 's_^[0-9]*:__g'; \
     }; f"
 
     ##? Alias for 'file-last-commit-all-branches'.
@@ -3085,7 +3085,7 @@ directory across all known branches:
 #+begin_src conf
     file-last-commit-all-local-branches-2 = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git file-last-commit-all-local-branches-2 FILE_PATH\n'; \
+            printf 'Usage: git file-last-commit-all-local-branches-2 FILE_PATH\n' >&2; \
             return 64; \
         fi; \
         FILE_PATH=\"$1\"; \
@@ -3111,8 +3111,8 @@ day, ~W~ for week, ~M~ for month, and ~Y~ for year.
 # NOTE: This file is meant to be sourced (e.g. from .bashrc or .zshrc)
 
 # Check if 'git' command is available.
-if ! command -v git > /dev/null 2>&1; then
-    printf >&2 "ERROR: 'git' is not installed. Please install it.\n"
+if ! command -v git >/dev/null 2>&1; then
+    printf "ERROR: 'git' is not installed. Please install it.\n" >&2
     return 69                           # EX_UNAVAILABLE: Service unavailable.
 fi
 
@@ -3229,7 +3229,7 @@ This allows doing nice things like:
     ##?
     ##? This shows how FILE_PATH changed in COMMIT.
     difftool-file-parent = "!f() { \
-        [ $# -eq 2 ] || { printf >&2 'Usage: git difftool-file-parent COMMIT FILE_PATH\\n'; exit 64; }; \
+        [ $# -eq 2 ] || { printf 'Usage: git difftool-file-parent COMMIT FILE_PATH\\n' >&2; exit 64; }; \
         COMMIT=\"$1\"; \
         FILE_PATH=\"$2\"; \
         git difftool \"COMMIT^..COMMIT\" -- \"FILE_PATH\"; \
@@ -3250,11 +3250,11 @@ Diff the last commit for a given file:
     ##? - Finds the last commit that modified FILE_PATH using 'git log -1'.
     ##? - Then runs 'git difftool COMMIT^..COMMIT -- FILE_PATH' to show the change.
     difftool-file-last = "!f() { \
-        [ $# -ge 1 ] || { printf >&2 'Usage: git difftool-file-last FILE_PATH [-- <options>]\\n'; exit 64; }; \
+        [ $# -ge 1 ] || { printf 'Usage: git difftool-file-last FILE_PATH [-- <options>]\\n' >&2; exit 64; }; \
         FILE_PATH=$1; \
         LAST_COMMIT=$(git log -1 --format=%H -- \"$FILE_PATH\") || exit 1; \
         if [ -z \"$LAST_COMMIT\" ]; then \
-            printf >&2 'Error: No commits found for %s\\n' \"$FILE_PATH\"; \
+            printf 'Error: No commits found for %s\\n' \"$FILE_PATH\" >&2; \
             exit 1; \
         fi; \
         printf 'Last commit modifying %s:\\n' \"$FILE_PATH\"; \
@@ -3304,7 +3304,7 @@ last commit it was touched.
     ##?                                 HEAD and 2 commits ago.
     diff-commits-ago = "!f() { \
         if [ $# -lt 1 ] || [ $# -gt 2 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git diff-commits-ago NUMBER [FILE]\n'; \
+            printf 'Usage: git diff-commits-ago NUMBER [FILE]\n' >&2; \
             return 64; \
         fi; \
         if [ $# -eq 2 ]; then \
@@ -3398,7 +3398,7 @@ the specified commit hash, sorted by the most recent commit date:
     ##? commit, sorted by the latest commit date.
     branches-containing = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git branches-containing COMMIT\n'; \
+            printf 'Usage: git branches-containing COMMIT\n' >&2; \
             return 64; \
         fi; \
         COMMIT=\"$1\"; \
@@ -3443,7 +3443,7 @@ This command lists all tags that contain the specified commit hash:
     ##? date.
     tags-containing = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git tags-containing COMMIT\n'; \
+            printf 'Usage: git tags-containing COMMIT\n' >&2; \
             return 64; \
         fi; \
         COMMIT=\"$1\"; \
@@ -3468,7 +3468,7 @@ This command lists all tags that contain the specified commit hash:
     ##?   COMMIT2                       The second commit to check for ancestry
     is-ancestor = "!f() { \
         if [ $# -ne 2 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git is-ancestor COMMIT1 COMMIT2\n'; \
+            printf 'Usage: git is-ancestor COMMIT1 COMMIT2\n' >&2; \
             return 64; \
         fi; \
         COMMIT1=\"$1\"; \
@@ -3532,7 +3532,7 @@ Show commits that match *any* of the following patterns
     # See also git find-commit-messages-any PATTERN... (for current branch!!!)
     find-commit-messages-any-all-branches = "!f() { \
         if [ $# -eq 0 ]; then \
-            printf >&2 'ERROR: No search pattern provided\n'; \
+            printf 'ERROR: No search pattern provided\n' >&2; \
             return 2; \
         fi; \
         git log --all -i $(printf -- '--grep=%s ' \"$@\"); \
@@ -3558,7 +3558,7 @@ log --grep~. Equivalent of calling ~git log --grep=A --grep=B --grep=C ...~:
     # (FOR CURRENT BRANCH ONLY!!!)
     find-commit-messages-any = "!f() { \
         if [ $# -eq 0 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git find-commit-messages-any PATTERN...\n'; \
+            printf 'Usage: git find-commit-messages-any PATTERN...\n' >&2; \
             return 64; \
         fi; \
         for PATTERN in \"$@\"; do \
@@ -3593,7 +3593,7 @@ Show commits that match *all* of the following patterns
     # (FOR CURRENT BRANCH ONLY!!!)
     find-commit-messages-all = "!f() { \
         if [ $# -eq 0 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git find-commit-messages-all PATTERN...\n'; \
+            printf 'Usage: git find-commit-messages-all PATTERN...\n' >&2; \
             return 64; \
         fi; \
         CMD=\"git log --all-match -i --color=always\"; \
@@ -3756,12 +3756,12 @@ several commits. Deleted files are included if they existed in past commits.
     # Usage: git grep-string-in-all-commit-snapshots SEARCH_TERM
     grep-string-in-all-commit-snapshots = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git grep-string-in-all-commit-snapshots SEARCH_TERM\n'; \
+            printf 'Usage: git grep-string-in-all-commit-snapshots SEARCH_TERM\n' >&2; \
             return 64; \
         fi; \
         SEARCH_TERM=\"$1\"; \
         git rev-list --all | \
-        xargs -n1 sh -c 'git grep -F \"$0\" \"$1\" | sed \"s/^$1:/$(git rev-parse --short $1):/\"' \"$SEARCH_TERM\"; \
+        xargs -n1 sh -c 'git grep -F \"$0\" \"$1\" | sed \"s_^$1:_$(git rev-parse --short $1):_\"' \"$SEARCH_TERM\"; \
     }; f"
 #+end_src
 
@@ -3867,10 +3867,10 @@ prompting you for the message you've already entered!
 
     # Append the staged changes to the last commit, reusing its message.
     amend-reuse = "!f() { \
-        upstream_commit=$(git upstream-commit 2> /dev/null); \
+        upstream_commit=$(git upstream-commit 2>/dev/null); \
         local_commit=$(git local-commit); \
         if [ -n \"$upstream_commit\" ] && [ \"$upstream_commit\" = \"$local_commit\" ]; then \
-            printf >&2 'ERROR: The commit has already been pushed to the remote repository.\n'; \
+            printf 'ERROR: The commit has already been pushed to the remote repository.\n' >&2; \
             return 2; \
         fi; \
         git commit -v --amend --reuse-message HEAD; \
@@ -3888,13 +3888,13 @@ Oh, you made a typo!
     ##?   git amend-message "Fix typo in README"
     amend-message = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git amend-message NEW_COMMIT_MESSAGE\n'; \
+            printf 'Usage: git amend-message NEW_COMMIT_MESSAGE\n' >&2; \
             return 64; \
         fi; \
-        upstream_commit=$(git upstream-commit 2> /dev/null); \
+        upstream_commit=$(git upstream-commit 2>/dev/null); \
         local_commit=$(git local-commit); \
         if [ -n \"$upstream_commit\" ] && [ \"$upstream_commit\" = \"$local_commit\" ]; then \
-            printf >&2 'ERROR: The commit has already been pushed to the remote repository.\n'; \
+            printf 'ERROR: The commit has already been pushed to the remote repository.\n' >&2; \
             return 2; \
         fi; \
         git commit --amend -m \"$1\"; \
@@ -3917,15 +3917,15 @@ to open your commit editor and reword the message.
     ##? only if the commit has not been pushed.
     amend-author = "!f() { \
         if [ $# -ne 2 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git amend-author NAME EMAIL\n'; \
+            printf 'Usage: git amend-author NAME EMAIL\n' >&2; \
             return 64; \
         fi; \
         NAME=\"$1\"; \
         EMAIL=\"$2\"; \
-        upstream_commit=$(git upstream-commit 2> /dev/null); \
+        upstream_commit=$(git upstream-commit 2>/dev/null); \
         local_commit=$(git local-commit); \
         if [ -n \"$upstream_commit\" ] && [ \"$upstream_commit\" = \"$local_commit\" ]; then \
-            printf >&2 'ERROR: The commit has already been pushed to the remote repository.\n'; \
+            printf 'ERROR: The commit has already been pushed to the remote repository.\n' >&2; \
             return 2; \
         fi; \
         git commit --amend --author=\"$NAME <$EMAIL>\" --reuse-message HEAD; \
@@ -4111,26 +4111,26 @@ effective skills -- so that people think you are smart.
     ##? Falls back to 'git squash-force' if all checks pass.
     squash = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git squash NUM_OF_COMMITS_TO_UNDO\n'; \
+            printf 'Usage: git squash NUM_OF_COMMITS_TO_UNDO\n' >&2; \
             return 64; \
         fi; \
         if ! printf '%s' \"$1\" | grep -Eq '^[0-9]+$'; then \
-            printf >&2 'ERROR: Argument must be a non-negative integer.\n'; \
+            printf 'ERROR: Argument must be a non-negative integer.\n' >&2; \
             return 2; \
         fi; \
         NUM_OF_COMMITS_TO_UNDO=$1; \
-        upstream_branch=$(git upstream-branch 2> /dev/null); \
+        upstream_branch=$(git upstream-branch 2>/dev/null); \
         if [ -z \"$upstream_branch\" ]; then \
-            printf >&2 'Warning: No upstream branch configured for the current branch.\n'; \
-            printf >&2 'Consider using 'squash-force' alias.\n'; \
+            printf 'Warning: No upstream branch configured for the current branch.\n' >&2; \
+            printf 'Consider using 'squash-force' alias.\n' >&2; \
             return 2; \
         fi; \
         num_unpushed=$(git rev-list $upstream_branch..HEAD --count); \
         if [ $NUM_OF_COMMITS_TO_UNDO -le $num_unpushed ]; then \
             git squash-force $NUM_OF_COMMITS_TO_UNDO; \
         else \
-            printf >&2 'ERROR: Cannot squash %d commits. There are only %d unpushed commits.\n' \
-                   $NUM_OF_COMMITS_TO_UNDO $num_unpushed; \
+            printf 'ERROR: Cannot squash %d commits. There are only %d unpushed commits.\n' \
+                   $NUM_OF_COMMITS_TO_UNDO $num_unpushed >&2; \
             return 2; \
         fi; \
     }; f"
@@ -4237,7 +4237,7 @@ git-iterate-commits() {
 
         # Execute the provided Git command with the commit hash.
         git "$git_command" "$commit_hash" \
-            || printf >&2 "ERROR: Failed to execute 'git %s %s'\n" "$git_command" "$commit_hash"
+            || printf "ERROR: Failed to execute 'git %s %s'\n" "$git_command" "$commit_hash" >&2
     done
 }
 #+end_src
@@ -4594,7 +4594,7 @@ Create a new branch (maximum 40-character name advised), and then switch to it:
     ##? Create a new branch and switch to it in one step.
     create-branch = "!f() { \
         if [ $# -ne 1 ]; then \
-            printf >&2 'Usage: git create-branch BRANCH_NAME\n'; \
+            printf 'Usage: git create-branch BRANCH_NAME\n' >&2; \
             exit 64; \
         fi; \
         BRANCH_NAME=\"$1\"; \
@@ -4633,9 +4633,9 @@ Name of current branch (not so useful in itself, but used in other aliases):
     ##?
     ##? Get the current branch name.
     current-branch = "!f() { \
-        branch_name=\"$(git branch --show-current 2> /dev/null)\"; \
+        branch_name=\"$(git branch --show-current 2>/dev/null)\"; \
         if [ -z \"$branch_name\" ]; then \
-            printf >&2 'ERROR: Unable to determine current branch.\n'; \
+            printf 'ERROR: Unable to determine current branch.\n' >&2; \
             return 2; \
         fi; \
         printf '%s\n' \"$branch_name\"; \
@@ -4645,7 +4645,7 @@ Name of current branch (not so useful in itself, but used in other aliases):
     # The alternative methods
     #     current-branch = rev-parse --abbrev-ref HEAD
     # and
-    #     current-branch = symbolic-ref --short HEAD 2> /dev/null
+    #     current-branch = symbolic-ref --short HEAD 2>/dev/null
     # are less readable, less convenient and less user-friendly.
 #+end_src
 
@@ -4675,7 +4675,7 @@ Push the current branch to the remote and establish tracking:
     ##? upstream.
     publish-branch = "!f() { \
         if [ $# -ne 0 ]; then \
-            printf >&2 'Usage: git publish-branch\n'; \
+            printf 'Usage: git publish-branch\n' >&2; \
             return 64; \
         fi; \
         current_branch=$(git current-branch); \
@@ -4687,7 +4687,7 @@ Push the current branch to the remote and establish tracking:
     ##? Delete the current branch from the remote repository 'origin'.
     unpublish-branch = "!f() { \
         if [ $# -ne 0 ]; then \
-            printf >&2 'Usage: git unpublish-branch\n'; \
+            printf 'Usage: git unpublish-branch\n' >&2; \
             return 64; \
         fi; \
         current_branch=$(git current-branch); \
@@ -4753,22 +4753,22 @@ branch (if any).
     # Verify if a local branch exists.
     verify-local-branch = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git verify-local-branch BRANCH_NAME\n'; \
+            printf 'Usage: git verify-local-branch BRANCH_NAME\n' >&2; \
             return 64; \
         fi; \
         BRANCH_NAME=\"$1\"; \
-        git rev-parse --verify \"$BRANCH_NAME\" > /dev/null 2>&1; \
+        git rev-parse --verify \"$BRANCH_NAME\" >/dev/null 2>&1; \
     }; f"
 
     # Usage: git verify-remote-branch BRANCH_NAME
     # Check if a remote branch exists.
     verify-remote-branch = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git verify-remote-branch BRANCH_NAME\n'; \
+            printf 'Usage: git verify-remote-branch BRANCH_NAME\n' >&2; \
             return 64; \
         fi; \
         BRANCH_NAME=\"$1\"; \
-        git rev-parse --verify \"$(git origin)/$BRANCH_NAME\" > /dev/null 2>&1; \
+        git rev-parse --verify \"$(git origin)/$BRANCH_NAME\" >/dev/null 2>&1; \
     }; f"
 #+end_src
 
@@ -4817,7 +4817,7 @@ XXX: Replace ~git branch -r --format~ with ~git for-each-ref --format~ to handle
     # Edit the description of a Git branch.
     branch-edit-desc = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git branch-edit-desc BRANCH_NAME\n'; \
+            printf 'Usage: git branch-edit-desc BRANCH_NAME\n' >&2; \
             return 64; \
         fi; \
         BRANCH_NAME=\"$1\"; \
@@ -4837,7 +4837,7 @@ XXX: Replace ~git branch -r --format~ with ~git for-each-ref --format~ to handle
     # Show the description of a Git branch.
     branch-show-desc = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git branch-show-desc BRANCH_NAME\n'; \
+            printf 'Usage: git branch-show-desc BRANCH_NAME\n' >&2; \
             return 64; \
         fi; \
         BRANCH_NAME=\"$1\"; \
@@ -4952,8 +4952,8 @@ branch up* to all the latest changes on the ~main~ branch.
         if [ $merge_status -eq 0 ]; then \
             printf \"\\033[1mBranch synced:\\033[0m '%s' successfully synced with '%s'\\n\" \"$current_branch\" \"$main_branch\"; \
         else \
-            git merge --abort 2> /dev/null; \
-            printf >&2 \"\\033[1mUnable to sync branch:\\033[0m You can't merge until you resolve all merge conflicts.\\n\"; \
+            git merge --abort 2>/dev/null; \
+            printf \"\\033[1mUnable to sync branch:\\033[0m You can't merge until you resolve all merge conflicts.\\n\" >&2; \
             return 2; \
         fi \
     }; f"
@@ -5010,7 +5010,7 @@ Or, if you need more control and visibility over the stash process:
             git pull --rebase; \
             # Check for conflicts before popping the stash. \
             if ! git diff --quiet && ! git diff --cached --quiet; then \
-                printf >&2 \"\\033[1mStash application would result in conflicts. Resolve conflicts manually.\\033[0m\\n\"; \
+                printf \"\\033[1mStash application would result in conflicts. Resolve conflicts manually.\\033[0m\\n\" >&2; \
                 git reset --hard; # Reset working directory to avoid accidental commit. \
                 return 2; \
             fi; \
@@ -5113,13 +5113,13 @@ See script =git-update-all= at [[https://stackoverflow.com/questions/4318161/can
     ##?   BRANCH_NAME                   The name of the branch to check.
     has-new-commits = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git has-new-commits BRANCH_NAME\n'; \
+            printf 'Usage: git has-new-commits BRANCH_NAME\n' >&2; \
             return 64; \
         fi; \
         BRANCH_NAME=\"$1\"; \
         if [ -z \"$BRANCH_NAME\" ]; then \
-            printf >&2 'ERROR: Please provide a branch name as a parameter.\n' \
-            return 2; \
+            printf 'ERROR: Please provide a branch name as a parameter.\n' >&2; \
+            return 64; \
         fi; \
         [ $(git rev-list --count $(git origin)/\"$BRANCH_NAME\"..\"$BRANCH_NAME\") -gt 0 ]; \
     }; f"
@@ -5171,7 +5171,7 @@ See script =git-update-all= at [[https://stackoverflow.com/questions/4318161/can
                         printf \"\n\"; \
                     else \
                         printf \"\\e[91mERROR: Pull failed for branch '%s'.\\e[0m\n\" \"$branch\"; \
-                        if git rebase --abort > /dev/null 2>&1; then \
+                        if git rebase --abort >/dev/null 2>&1; then \
                             printf \"Rebase operation aborted.\n\n\"; \
                         else \
                             printf \"\\e[91mCould not abort the rebase operation. Please do so manually.\\e[0m\n\"; \
@@ -5280,7 +5280,7 @@ Delete a *remote* branch:
     # Delete a remote branch.
     delete-remote-branch = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git delete-remote-branch BRANCH_NAME\n'; \
+            printf 'Usage: git delete-remote-branch BRANCH_NAME\n' >&2; \
             return 64; \
         fi; \
         BRANCH_NAME=\"$1\"; \
@@ -5303,7 +5303,7 @@ Delete a *remote* branch:
     ##? Delete both local and remote branches.
     delete-branch = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git delete-branch BRANCH_NAME\n'; \
+            printf 'Usage: git delete-branch BRANCH_NAME\n' >&2; \
             return 64; \
         fi; \
         BRANCH_NAME=\"$1\"; \
@@ -5417,7 +5417,7 @@ To rename a branch *locally and remotely*:
     # Rename both a local and remote branch.
     rename-branch = "!f() { \
         if [ $# -ne 2 ]; then \
-            printf >&2 'Usage: git rename-branch OLD_BRANCH_NAME NEW_BRANCH_NAME\n'; \
+            printf 'Usage: git rename-branch OLD_BRANCH_NAME NEW_BRANCH_NAME\n' >&2; \
             return 64; \
         fi; \
         git rename-local-branch \"$1\" \"$2\" \
@@ -5564,7 +5564,7 @@ Change the tag name but keep it on the same commit.
     # Rename a tag (locally and remotely).
     rename-tag = "!f() { \
         if [ $# -ne 2 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git rename-tag OLD_TAG NEW_TAG\n'; \
+            printf 'Usage: git rename-tag OLD_TAG NEW_TAG\n' >&2; \
             return 64; \
         fi; \
         OLD_TAG_NAME=\"$1\"; \
@@ -5588,7 +5588,7 @@ alias to remove it.
     ##? Delete a local and remote tag.
     delete-tag = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git delete-tag TAG\\n'; \
+            printf 'Usage: git delete-tag TAG\\n' >&2; \
             return 64; \
         fi; \
         TAG_NAME=\"$1\"; \
@@ -5656,7 +5656,7 @@ from ~HEAD~ but not from the specified branch. It answers the common question:
     ##? Show commits on HEAD that are not reachable from BRANCH.
     ahead-of = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git ahead-of BRANCH\n'; \
+            printf 'Usage: git ahead-of BRANCH\n' >&2; \
             return 64; \
         fi; \
         BRANCH=\"$1\"; \
@@ -5678,7 +5678,7 @@ Complementary alias:
     ##? Show commits on BRANCH that are not reachable from HEAD.
     behind = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git behind BRANCH\n'; \
+            printf 'Usage: git behind BRANCH\n' >&2; \
             return 64; \
         fi; \
         BRANCH=\"$1\"; \
@@ -5707,7 +5707,7 @@ files have changed on my current branch since it was created from ~BRANCH~?"/
     ##? Show changed files on HEAD since it diverged from BRANCH.
     changed-files-since = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git changed-files-since BRANCH\n'; \
+            printf 'Usage: git changed-files-since BRANCH\n' >&2; \
             return 64; \
         fi; \
         BRANCH=\"$1\"; \
@@ -5732,7 +5732,7 @@ View all diffs.
     ##?   git compare master@{1day} master
     compare = "!f() { \
         if [ $# -ne 2 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git compare FROM TO\n'; \
+            printf 'Usage: git compare FROM TO\n' >&2; \
             return 64; \
         fi; \
         FROM=\"$1\"; \
@@ -5779,7 +5779,7 @@ been merged.
     ##? Show commits that differ between HEAD and BRANCH.
     missing = "!f() { \
         if [ $# -gt 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git missing [BRANCH]\n'; \
+            printf 'Usage: git missing [BRANCH]\n' >&2; \
             return 64; \
         fi; \
         if [ $# -eq 1 ]; then \
@@ -5859,9 +5859,9 @@ also be a commit that was merged.
     common-ancestor = "!f() { \
         MAIN_BRANCH=${1:-$(git main-branch)}; \
         CURRENT_BRANCH=${2:-$(git rev-parse --abbrev-ref HEAD)}; \
-        base=$(git merge-base \"$MAIN_BRANCH\" \"$CURRENT_BRANCH\" 2> /dev/null); \
+        base=$(git merge-base \"$MAIN_BRANCH\" \"$CURRENT_BRANCH\" 2>/dev/null); \
         if [ -z \"$base\" ]; then \
-            printf >&2 '%s\n' \"ERROR: Unable to find common ancestor between branches '$MAIN_BRANCH' and '$CURRENT_BRANCH'. Branches may not exist or be valid.\"; \
+            printf '%s\n' \"ERROR: Unable to find common ancestor between branches '$MAIN_BRANCH' and '$CURRENT_BRANCH'. Branches may not exist or be valid.\" >&2; \
             return 2; \
         fi; \
         short_base=$(git rev-parse --short \"$base\"); \
@@ -5913,11 +5913,11 @@ Available Filters for ~--diff-filter~:
         current_branch=HEAD; \
         OTHER_BRANCH=${1:-$(git main-branch)}; \
         if ! git verify-local-branch \"$current_branch\"; then \
-            printf >&2 \"ERROR: Current branch '%s' is not a valid branch.\n\" \"$current_branch\"; \
+            printf \"ERROR: Current branch '%s' is not a valid branch.\n\" \"$current_branch\" >&2; \
             return 2; \
         fi; \
         if ! git verify-local-branch \"$OTHER_BRANCH\"; then \
-            printf >&2 \"ERROR: Other branch '%s' is not a valid branch.\n\" \"$OTHER_BRANCH\"; \
+            printf \"ERROR: Other branch '%s' is not a valid branch.\n\" \"$OTHER_BRANCH\" >&2; \
             return 2; \
         fi; \
         missing_files_to_current=$(git diff --name-only \"$OTHER_BRANCH\"...\"$current_branch\" | wc -l | tr -d '[:space:]'); \
@@ -5929,11 +5929,11 @@ Available Filters for ~--diff-filter~:
         current_branch=HEAD; \
         OTHER_BRANCH=${1:-$(git main-branch)}; \
         if ! git verify-local-branch \"$current_branch\"; then \
-            printf >&2 \"ERROR: Current branch '%s' is not a valid branch.\n\" \"$current_branch\"; \
+            printf \"ERROR: Current branch '%s' is not a valid branch.\n\" \"$current_branch\" >&2; \
             return 2; \
         fi; \
         if ! git verify-local-branch \"$OTHER_BRANCH\"; then \
-            printf >&2 \"ERROR: Other branch '%s' is not a valid branch.\n\" \"$OTHER_BRANCH\"; \
+            printf \"ERROR: Other branch '%s' is not a valid branch.\n\" \"$OTHER_BRANCH\" >&2; \
             return 2; \
         fi; \
         git diff --name-only \"$OTHER_BRANCH\"...\"$current_branch\"; \
@@ -5972,7 +5972,7 @@ See example at https://gitlab.com/procps-ng/procps/-/network/master
 
 #+begin_src shell :tangle bin/rc-common-settings-gitboost
 # Check if 'tig' command is installed.
-if command -v tig > /dev/null 2>&1; then
+if command -v tig >/dev/null 2>&1; then
     # Aliases for 'tig' commands.
     alias tigs='tig status'             # Use it all of the time!
     alias tigb='tig blame'
@@ -6195,7 +6195,7 @@ If everything is OK, you can merge the pull request.
     mpr = "!f() { \
         declare current_branch=\"$(git current-branch)\"; \
         declare BRANCH_NAME=\"${2:-$current_branch}\"; \
-        if [ $(printf \"%s\" \"$1\" | grep '^[0-9]\\+$' > /dev/null; printf $?) -eq 0 ]; then \
+        if [ $(printf \"%s\" \"$1\" | grep '^[0-9]\\+$' >/dev/null; printf $?) -eq 0 ]; then \
             git fetch $(git origin) refs/pull/\"$1\"/head:pr/\"$1\" \
                 && git checkout -B $BRANCH_NAME \
                 && git rebase $BRANCH_NAME pr/\"$1\" \
@@ -6217,12 +6217,12 @@ If everything is OK, you can merge the pull request.
     #   git merge-pr $(git origin) 5
     merge-pr = "!f() { \
         if [ $# -ne 2 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git merge-pr REMOTE PR_NUMBER\\n'; \
+            printf 'Usage: git merge-pr REMOTE PR_NUMBER\\n' >&2; \
             return 64; \
         fi; \
         USER_AND_REPO=$(git remote show \"$1\" | grep 'Fetch URL:' | sed -E 's_.*github.com[:\\/]([a-zA-Z_-]+)\\/([a-zA-Z_-]+)\\.git$_\\1 \\2_'); \
         if [ -z \"$USER_AND_REPO\" ]; then \
-            printf >&2 'ERROR: Could not determine GitHub user/repo from remote\\n'; \
+            printf 'ERROR: Could not determine GitHub user/repo from remote\\n' >&2; \
             return 2; \
         fi; \
         USER=$(printf \"%s\" \"$USER_AND_REPO\" | cut -d' ' -f1); \
@@ -6230,7 +6230,7 @@ If everything is OK, you can merge the pull request.
         TMP_FILE=$(mktemp); \
         curl -s \"https://api.github.com/repos/$USER/$REPO/pulls/$2\" > \"$TMP_FILE\"; \
         if ! grep -q '\"title\":' \"$TMP_FILE\"; then \
-            printf >&2 'ERROR: Failed to fetch PR #%s\\n' \"$2\"; \
+            printf 'ERROR: Failed to fetch PR #%s\\n' \"$2\" >&2; \
             rm -f \"$TMP_FILE\"; \
             return 2; \
         fi; \
@@ -6239,15 +6239,15 @@ If everything is OK, you can merge the pull request.
         PULL_TITLE=$(grep '\"title\": ' \"$TMP_FILE\" | sed 's_^ *\"title\": \"__' | sed 's_\",$__'); \
         rm -f \"$TMP_FILE\"; \
         if [ -z \"$PULL_AUTHOR\" ] || [ -z \"$PULL_REF\" ] || [ -z \"$PULL_TITLE\" ]; then \
-            printf >&2 'ERROR: Failed to parse PR details\\n'; \
+            printf 'ERROR: Failed to parse PR details\\n' >&2; \
             return 2; \
         fi; \
         git fetch \"$1\" \"pull/$2/head\" || { \
-            printf >&2 'ERROR: Failed to fetch PR #%s\\n' \"$2\"; \
+            printf 'ERROR: Failed to fetch PR #%s\\n' \"$2\" >&2; \
             return 2; \
         }; \
         git merge --no-ff -m \"Merged pull request #$2 from $PULL_AUTHOR/$PULL_REF\\n\\n$PULL_TITLE\" FETCH_HEAD || { \
-            printf >&2 'ERROR: Merge failed\\n'; \
+            printf 'ERROR: Merge failed\\n' >&2; \
             return 2; \
         }; \
         printf 'Merged PR #%s\\n' \"$2\"; \
@@ -6403,7 +6403,7 @@ Tag and push changes to the repository:
     ##? Create a tagged release version in Git and push it to the remote repository.
     release-tag = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git release-tag VERSION\n'; \
+            printf 'Usage: git release-tag VERSION\n' >&2; \
             return 64; \
         fi; \
         VERSION=\"$1\"; \
@@ -6519,7 +6519,7 @@ current tag.  Useful for uploading to Elasticbeanstalk.
         main_branch=$(git main-branch); \
         changed_files=$(git diff --name-only \"$main_branch\"...\"$current_branch\"); \
         if [ -z \"$changed_files\" ]; then \
-            printf >&2 'ERROR: No changed files to export.\n'; \
+            printf 'ERROR: No changed files to export.\n' >&2; \
             return 2; \
         fi; \
         date=$(date +'%Y-%m-%d'); \
@@ -6928,7 +6928,7 @@ Run ~git show~ command in a temporary ~HOME~ directory set to ~/dev/null~.
     ##? List all Git repositories by finding .git directories, sorting the
     ##? output, and removing the '/.git' suffix and leading './'.
     repos = "!f() { \
-        find . -type d -name '.git' -prune -print 2> /dev/null | while read -r repo_path; do \
+        find . -type d -name '.git' -prune -print 2>/dev/null | while read -r repo_path; do \
             if [ \"$repo_path\" != \"./.git\" ]; then \
                 repo_path=\"${repo_path%/.git}\"; \
                 repo_path=\"${repo_path#./}\"; \
@@ -6951,7 +6951,7 @@ Run ~git show~ command in a temporary ~HOME~ directory set to ~/dev/null~.
     ##?                                 Git command
     all-repos = "!f() { \
         if [ $# -lt 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git all-repos COMMAND [ARGS]\\n'; \
+            printf 'Usage: git all-repos COMMAND [ARGS]\\n' >&2; \
             return 64; \
         fi; \
         find . -type d -name '.git' -prune 2>/dev/null \
@@ -7282,14 +7282,14 @@ Merge strategy:
     merge-into-main = "!f() { \
         current_branch=\"$(git current-branch)\"; \
         if [ -z \"$current_branch\" ]; then \
-            printf >&2 'ERROR: Unable to determine current branch.\n'; \
+            printf 'ERROR: Unable to determine current branch.\n' >&2; \
             return 2; \
         fi; \
         git checkout \"$(git main-branch)\" && \
         if git merge \"$current_branch\"; then \
             printf \"\\033[1mBranch merged:\\033[0m '%s' successfully merged\n\" \"$current_branch\"; \
         else \
-            printf >&2 \"\\033[1mUnable to merge branch:\\033[0m\n\"; \
+            printf \"\\033[1mUnable to merge branch:\\033[0m\n\" >&2; \
             return 2; \
         fi; \
         git checkout \"$current_branch\"; \
@@ -7369,13 +7369,13 @@ Run ~merge-check~ (before ~merge~) to check for any conflicts beforehand.
     ##?   git merge-check feature
     merge-check = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git merge-check BRANCH_TO_MERGE\n'; \
+            printf 'Usage: git merge-check BRANCH_TO_MERGE\n' >&2; \
             return 64; \
         fi; \
         BRANCH_TO_MERGE=\"$1\"; \
         git merge --no-commit --no-ff \"$BRANCH_TO_MERGE\"; \
         status=$?; \
-        if git rev-parse -q --verify MERGE_HEAD > /dev/null; then \
+        if git rev-parse -q --verify MERGE_HEAD >/dev/null; then \
             git merge --abort; \
         fi; \
         if [ $status -eq 0 ]; then \
@@ -7403,7 +7403,7 @@ and *detects conflicts*:
     # Show merge conflicts predicted by git merge-tree, without performing a merge.
     merge-tree-conflicts = "!f() { \
         if [ $# -ne 2 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git merge-tree-conflicts BASE_BRANCH FEATURE_BRANCH\n'; \
+            printf 'Usage: git merge-tree-conflicts BASE_BRANCH FEATURE_BRANCH\n' >&2; \
             return 64; \
         fi; \
         BASE_BRANCH=\"$1\"; \
@@ -7654,7 +7654,7 @@ cd "$(git root)"
     ##? Force checkout to a branch, discarding local changes if necessary.
     force-checkout = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: git force-checkout BRANCH_NAME\n'; \
+            printf 'Usage: git force-checkout BRANCH_NAME\n' >&2; \
             return 64; \
         fi; \
         BRANCH_NAME=$1; \
@@ -7664,7 +7664,7 @@ cd "$(git root)"
                     continue; \
                 fi; \
                 if printf \"%s\n\" \"$line\" | grep -q \"^[[:space:]]*\"; then \
-                    file_path=$(printf \"%s\n\" \"$line\" | sed \"s/^[[:space:]]*//\"); \
+                    file_path=$(printf \"%s\n\" \"$line\" | sed \"s_^[[:space:]]*__\"); \
                     if [ -n \"$file_path\" ]; then \
                         git checkout -- \"$file_path\"; \
                     fi; \
@@ -7697,7 +7697,7 @@ Stash local changes, checkout branch, and reapply stashed changes.
     ##? Only stashes if there are changes and restores the stash after switching.
     co-autostash-include-untracked = "!f() { \
         if [ $# -ne 1 ] || [ \"$1\" = \"-h\" ] || [ \"$1\" = \"--help\" ]; then \
-            printf >&2 'Usage: co-autostash BRANCH_NAME\n'; \
+            printf 'Usage: co-autostash BRANCH_NAME\n' >&2; \
             return 64; \
         fi; \
         BRANCH_NAME=\"$1\"; \
