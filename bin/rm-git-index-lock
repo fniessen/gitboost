@@ -10,5 +10,5 @@ if [[ -f .git/index.lock ]]; then
     printf "Deleted .git/index.lock\n"
 else
     # If the file does not exist, print a message.
-    printf >&2 ".git/index.lock does not exist\n"
+    printf ".git/index.lock does not exist\n" >&2
 fi
