@@ -2,8 +2,8 @@
 # NOTE: This file is meant to be sourced (e.g. from .bashrc or .zshrc)
 
 # Check if 'git' command is available.
-if ! command -v git > /dev/null 2>&1; then
-    printf >&2 "ERROR: 'git' is not installed. Please install it.\n"
+if ! command -v git >/dev/null 2>&1; then
+    printf "ERROR: 'git' is not installed. Please install it.\n" >&2
     return 69                           # EX_UNAVAILABLE: Service unavailable.
 fi
 

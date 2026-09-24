@@ -5,7 +5,7 @@
 file_path=$1
 echo -n "$file_path: "
 if [[ -f "$file_path" ]]; then
-    tracked=$(git ls-files "$file_path" 2> /dev/null)
+    tracked=$(git ls-files "$file_path" 2>/dev/null)
     if [[ -z "$tracked" ]]; then
         echo "Not tracked"
     else

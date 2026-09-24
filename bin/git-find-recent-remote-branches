@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-#? git-find-recent-remote-branches, Time-stamp: <2025-08-09 Sat 15:36>
-#? Copyright (C) 2024-2025 Fabrice Niessen. All rights reserved.
+#? git-find-recent-remote-branches, Time-stamp: <2026-08-14 Fri 16:29>
+#? Copyright (C) 2024-2026 Fabrice Niessen. All rights reserved.
 #?
 #? License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
 #? This is free software: you are free to change and redistribute it.
@@ -44,8 +44,8 @@ ERROR="${BOLD}${WHITE}${BGRED}"
 WARN="${YELLOW}"
 
 # Check if 'docopts' command is available.
-if ! command -v docopts > /dev/null 2>&1; then
-    printf >&2 "${ERROR}ERROR: 'docopts' command not found.${RESET}\n"
+if ! command -v docopts >/dev/null 2>&1; then
+    printf "${ERROR}ERROR: 'docopts' command not found.${RESET}\n" >&2
     exit $EX_UNAVAILABLE                # Service unavailable.
 fi
 
@@ -63,13 +63,13 @@ set -e
 since=${since:-'1.week.ago'}
 
 # Fetch latest changes and remote branches, pruning deleted branches.
-git fetch --prune > /dev/null 2>&1
+git fetch --prune >/dev/null 2>&1
 
 # Get the list of remote branches, exit gracefully if there are no branches.
 branches=$(git for-each-ref --sort='-committerdate' --format='%(refname:short)' refs/remotes | grep -v HEAD || true)
 
 if [[ -z "$branches" ]]; then
-    printf >&2 "No remote branches found.\n"
+    printf "No remote branches found.\n" >&2
     exit 2
 fi
 
@@ -80,7 +80,7 @@ output=()
 for branch in $branches; do
     # Capture the output of the git log command for the last commit
     # since the specified date for the current branch.
-    commit_info=$(git log -1 --since="$since" "$branch" 2> /dev/null)
+    commit_info=$(git log -1 --since="$since" "$branch" 2>/dev/null)
 
     # Check if the output contains at least one line (indicating a recent
     # commit).

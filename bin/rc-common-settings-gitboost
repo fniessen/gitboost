@@ -6,8 +6,8 @@ EX_USAGE=64                             # Command-line usage error.
 EX_UNAVAILABLE=69                       # Service unavailable.
 
 # Check if 'git' command is available.
-if ! command -v git > /dev/null 2>&1; then
-    printf >&2 "ERROR: 'git' is not installed. Please install it.\n"
+if ! command -v git >/dev/null 2>&1; then
+    printf "ERROR: 'git' is not installed. Please install it.\n" >&2
     return $EX_UNAVAILABLE
 fi
 
@@ -15,7 +15,7 @@ fi
 alias g=git
 
 # Check if 'zip' command is available.
-if ! command -v zip > /dev/null 2>&1; then
+if ! command -v zip >/dev/null 2>&1; then
     printf "\033[1;33mWarning: 'zip' is not installed. Please install it.\033[0m\n"
 fi
 
@@ -66,12 +66,12 @@ git-iterate-commits() {
 
         # Execute the provided Git command with the commit hash.
         git "$git_command" "$commit_hash" \
-            || printf >&2 "ERROR: Failed to execute 'git %s %s'\n" "$git_command" "$commit_hash"
+            || printf "ERROR: Failed to execute 'git %s %s'\n" "$git_command" "$commit_hash" >&2
     done
 }
 
 # Check if 'tig' command is installed.
-if command -v tig > /dev/null 2>&1; then
+if command -v tig >/dev/null 2>&1; then
     # Aliases for 'tig' commands.
     alias tigs='tig status'             # Use it all of the time!
     alias tigb='tig blame'

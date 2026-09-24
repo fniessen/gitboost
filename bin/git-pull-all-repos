@@ -18,7 +18,7 @@ WARN="${YELLOW}"
 
 # Find all Git repositories under the current directory, using -prune to optimize search.
 # NOTE: Redirect stderr to /dev/null to avoid 'permission denied' errors.
-mapfile -t repos < <(find . -type d -name ".git" -prune 2> /dev/null | sort -V)
+mapfile -t repos < <(find . -type d -name ".git" -prune 2>/dev/null | sort -V)
 
 if [[ ${#repos[@]} -eq 0 ]]; then
     printf "%sNo Git repositories found.%s\n" "${WARN}" "${RESET}"
@@ -29,7 +29,7 @@ for repo in "${repos[@]}"; do
     repo_dir=$(dirname "$repo")
     [[ -r "$repo_dir" ]] || continue
     # Get the repository name using Git's root path (more reliable than basename).
-    repo_name=$(git -C "$repo_dir" rev-parse --show-toplevel 2> /dev/null | xargs basename)
+    repo_name=$(git -C "$repo_dir" rev-parse --show-toplevel 2>/dev/null | xargs basename)
     printf "\n%s▼ Pulling latest changes for repository '%s'...%s\n" "${BOLD}${CYAN}" "$repo_name" "${RESET}"
 
     # Run 'git pull' with a timeout of 30 seconds.

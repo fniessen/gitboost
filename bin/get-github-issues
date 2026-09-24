@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-#? get-github-issues, Time-stamp: <2025-01-05 Sun 11:56>
-#? Copyright (C) 2024 Fabrice Niessen. All rights reserved.
+#? get-github-issues, Time-stamp: <2026-09-24 Thu 21:31>
+#? Copyright (C) 2024-2026 Fabrice Niessen. All rights reserved.
 #?
 #? License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
 #? This is free software: you are free to change and redistribute it.
@@ -15,13 +15,13 @@ config_file="$HOME/.secret/github-config"
 if [ -f "$config_file" ]; then
     source "$config_file"
 else
-    printf >&2 "Error: Configuration file '%s' not found.\n" "$config_file"
+    printf "Error: Configuration file '%s' not found.\n" "$config_file" >&2
     exit 2
 fi
 
 # Check if required environment variable is set.
 if [ -z "$GITHUB_TOKEN" ]; then
-    printf >&2 "Error: GITHUB_TOKEN environment variable must be set.\n"
+    printf "Error: GITHUB_TOKEN environment variable must be set.\n" >&2
     exit 2
 fi
 

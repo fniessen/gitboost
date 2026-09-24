@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#? git-check-java-jar-changes, Time-stamp: <2026-01-11 Sun 11:33>
+#? git-check-java-jar-changes, Time-stamp: <2026-08-14 Fri 16:29>
 #? Copyright (C) 2025-2026 Fabrice Niessen. All rights reserved.
 #?
 #? License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
@@ -28,8 +28,8 @@ set -uo pipefail
 
 # Check if required commands are available.
 for cmd in docopts; do
-    if ! command -v "$cmd" > /dev/null 2>&1; then
-        printf >&2 "Error: '%s' command not found.\n" "$cmd"
+    if ! command -v "$cmd" >/dev/null 2>&1; then
+        printf "Error: '%s' command not found.\n" "$cmd" >&2
         exit 2
     fi
 done
