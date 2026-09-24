@@ -5,18 +5,28 @@
 
 * Tasks
 
-** TODO Vérifier que 'git unmodify' et 'git unadd' existent et fonctionnent bien
+** TODO Vérifier git unmodify et unadd
 
-** TODO Use white bold on red background color for the 'upstream track' param in alias 'br'
+Vérifier que 'git unmodify' et 'git unadd' existent et fonctionnent bien
+
+** TODO Set upstream track style in alias br
+
+Use white bold on red background color for the 'upstream track' param in alias
+'br'
 
 ** BitBucket API
 
 https://rdrr.io/github/rgray1/bbcodelibrary/src/R/callapi.R (using curl)
 https://medium.com/dataseries/how-to-make-your-own-bitbucket-app-b2c79c9bf99
 
-** MAYB See function teachgit in https://github.com/matthewmccullough/dotfiles/blob/master/shellactivities
+** MAYB Review teachgit helper
 
-** MAYB CircleCI: Continuous Integration and Delivery
+See function teachgit in
+https://github.com/matthewmccullough/dotfiles/blob/master/shellactivities
+
+** MAYB CircleCI overview
+
+CircleCI: Continuous Integration and Delivery
 
 * Notes
 
@@ -64,7 +74,9 @@ https://dev.to/lydiahallie/cs-visualized-useful-git-commands-37p1
 
 XXX See https://blog.liip.ch/archive/2015/12/11/git-tips-tricks.html!!!
 
-** TODO Check out other aliases
+** TODO Review alias collection
+
+Check out other aliases
 
 For aliases and shell/git configuration, a few pearls:
 
@@ -89,36 +101,23 @@ learngitbranching.js.org/
 - https://github.com/GitAlias/gitalias
 - https://gist.github.com/jedmao/5053440 (+ example of CSS style on GitHub)
 
-** TODO Look at Git Power Routines [course]
+** TODO Review Git power routines
+
+Look at Git Power Routines [course]
 
 https://www.youtube.com/playlist?list=PLDshL1Z581YYxLsjYwM25HkIYrymXb7H_
 
-** TODO Read about Git
+** TODO Learn Git basics
+
+Read about Git
 
 http://marlacorinne.4parkers.com/2012/07/20/git-pull-vs-git-fetch-then-merge/
 https://adamcod.es/2014/12/10/git-pull-correct-workflow.html
 [[https://bitbucket.org/blog/get-git-guru-gold-with-bitbuckets-glorious-git-guides][Get git guru gold with Bitbucket's glorious git guides]]
 
-** TODO Outsource and include private entries in .gitconfig
+** TODO Emacs Git quick start
 
-Git 1.7.10+ supports this syntax in =.gitconfig=:
-
-#+begin_src conf :tangle no
-[include]
-    path = /path/to/file
-#+end_src
-
-So you can split your gitconfig configurations across multiple files, e.g. you
-can have a =.gitconfig= file for your nonsensitive information and a git ignored
-=.githubconfig= file containing your private github token.
-
-See http://travisjeffery.com/b/2012/03/using-gits-include-for-private-information-like-github-tokens/
-
-Mix professional and personal Git configurations:
-
-http://monkeypatch.me/blog/mixing-professional-and-personal-git-configurations.html
-
-** TODO Git Quick Start For Emacs Devs
+Git Quick Start For Emacs Devs
 
 http://www.emacswiki.org/emacs/GitQuickStartForEmacsDevs
 

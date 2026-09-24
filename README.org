@@ -8251,7 +8251,7 @@ branch (using ~git push --force~) and someone needs a talkin' to.
 
 * Local configuration
 
-Your =.gitconfig= file might look like the following configuration:
+Your =~/.gitconfig= file might look like the following:
 
 #+begin_src conf :tangle no
 [include]
@@ -8266,17 +8266,53 @@ Your =.gitconfig= file might look like the following configuration:
     path = ~/1-Clients/.gitconfig
 #+end_src
 
-If you need to change the user email for client projects, you can use an
-~includeIf~ directive to apply a common =.gitconfig= for /all projects located under/
-=~/1-Clients/=.
+** Splitting configuration across files
 
-For work projects, create a =.gitconfig= file in the projects' directory to
-specify the configuration for those projects:
+Git supports splitting configuration across multiple files. This is particularly
+useful for keeping personal or sensitive settings separate from your main
+configuration:
+
+#+begin_src conf :tangle no
+[include]
+    path = /path/to/file
+#+end_src
+
+This allows you to organize your Git configuration across several files. For
+example, you can keep general settings in =~/.gitconfig= and store private
+information, such as GitHub credentials, access tokens, or work-specific
+settings, in a separate file such as =~/.githubconfig=.
+
+This approach keeps your main configuration clean and shareable while reducing
+the risk of accidentally exposing sensitive data.
+
+** Conditional configuration
+
+Git can also load configuration files conditionally based on the location of
+a repository.
+
+In the example above, /all repositories located under/ =~/1-Clients/= automatically
+include the configuration stored in =~/1-Clients/.gitconfig=:
+
+#+begin_src conf :tangle no
+[includeIf "gitdir:~/1-Clients/"]
+    path = ~/1-Clients/.gitconfig
+#+end_src
+
+This makes it easy to apply a common configuration to a group of related
+repositories without duplicating settings.
+
+** Overriding settings for work projects
+
+If you need to use a different email address for client or work projects, create
+a =.gitconfig= file in the corresponding directory:
 
 #+begin_src conf :tangle no
 [user]
     email = work.email@example.com
 #+end_src
+
+The settings from this file will be applied automatically to repositories
+covered by the matching ~includeIf~ rule.
 
 * Contribute to the project!
 
